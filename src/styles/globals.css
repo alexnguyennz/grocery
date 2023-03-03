@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+ul a:hover {
+  @apply underline;
+}
+
+.breadcrumbs a {
+  @apply hover:underline;
+}

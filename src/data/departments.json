@@ -1,0 +1,54 @@
+[
+  {
+    "name": "Fruit & Veg",
+    "slug": "fruit-veg"
+  },
+  {
+    "name": "Meat & Poultry",
+    "slug": "meat-poultry"
+  },
+  {
+    "name": "Fish & Seafood",
+    "slug": "fish-seafood"
+  },
+  {
+    "name": "Fridge & Deli",
+    "slug": "fridge-deli"
+  },
+  {
+    "name": "Bakery",
+    "slug": "bakery"
+  },
+  {
+    "name": "Frozen",
+    "slug": "frozen"
+  },
+  {
+    "name": "Pantry",
+    "slug": "pantry"
+  },
+  {
+    "name": "Beer & Wine",
+    "slug": "beer-wine"
+  },
+  {
+    "name": "Drinks",
+    "slug": "drinks"
+  },
+  {
+    "name": "Health & Body",
+    "slug": "health-body"
+  },
+  {
+    "name": "Household",
+    "slug": "household"
+  },
+  {
+    "name": "Baby & Child",
+    "slug": "baby-child"
+  },
+  {
+    "name": "Pet",
+    "slug": "pet"
+  }
+]
