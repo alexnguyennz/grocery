@@ -19,3 +19,9 @@ Doesn't reproduce stock management, logistics, etc. that would actually be invol
 - [Postgres](https://www.postgresql.org/) - database
 - [Stripe](https://stripe.com/) - payments integration
 - [Google Places API](https://developers.google.com/maps/documentation/places/web-service/overview) - address auto-completion
+
+### To Do
+
+- Add more products
+- For production - lock down database / [Supabase](https://supabase.com/docs/guides/platform/going-into-prod)
+- backend based cart session
