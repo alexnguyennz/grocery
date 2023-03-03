@@ -1,3 +1,5 @@
+http://grocery.alexnguyen.co.nz/
+
 A full-stack Next.js + Supabase e-commerce project. Initially intended to reproduce main features of [Countdown](<(https://countdown.co.nz)>) - an online groceries site.
 
 Doesn't reproduce stock management, logistics, etc. that would actually be involved with this sort of service.
