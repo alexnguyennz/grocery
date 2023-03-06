@@ -42,7 +42,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { data: user } = await getUser(supabase, session?.user.id);
 
   // get all user's addresses
-  const { data } = await getUserAddresses(supabase, session?.user.id);
+  const { data } = await getUserAddresses(supabase);
 
   return {
     props: {
@@ -74,7 +74,7 @@ export default function DeliveryAddresses({ user, user_addresses }: PageProps) {
       });
 
     // requery table
-    const { data } = await getUserAddresses(supabase, user.id);
+    const { data } = await getUserAddresses(supabase);
 
     setAddresses(data);
   }

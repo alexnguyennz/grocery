@@ -52,7 +52,7 @@ export default function RegisterDetailsModal() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState<Date | null>(new Date());
+  const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
 
   const [selectedAddress, setSelectedAddress] = useState<AddressComponent[]>(
     []

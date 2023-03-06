@@ -43,15 +43,7 @@ type PageProps = {
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const supabase = createServerSupabaseClient<Database>(ctx);
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  const { data, error } = await supabase
-    .from('users')
-    .select()
-    .eq('id', session?.user.id)
-    .single();
+  const { data, error } = await supabase.from('users').select().single();
 
   return {
     props: {
@@ -78,8 +70,6 @@ export default function ManageAccount({ user }: PageProps) {
       .from('users')
       .update({ phone_number: phoneNumber })
       .eq('id', user.id);
-
-    console.log('data', data);
   }
 
   async function updateEmail() {

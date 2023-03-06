@@ -58,10 +58,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { data } = await getSelectedAddress(supabase, session?.user.id);
 
   // get all user's addresses
-  const { data: user_addresses } = await getUserAddresses(
-    supabase,
-    session?.user.id
-  );
+  const { data: user_addresses } = await getUserAddresses(supabase);
 
   return {
     props: {

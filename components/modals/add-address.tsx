@@ -55,7 +55,7 @@ export default function AddAddressModal({ user, setAddresses }: PageProps) {
         icon: <IconCheck />,
       });
 
-    const { data } = await getUserAddresses(supabase, user.id);
+    const { data } = await getUserAddresses(supabase);
 
     setAddresses(data);
 

@@ -134,11 +134,8 @@ export async function insertUser(
 export type InsertUser = Awaited<ReturnType<typeof getShelfCategories>>['data'];
 
 /*** /checkout/revieworder, /account/delivery-addresses ***/
-export async function getUserAddresses(
-  supabase: SupabaseClient,
-  user_id: string | undefined
-) {
-  return await supabase.from('user_addresses').select().eq('user_id', user_id);
+export async function getUserAddresses(supabase: SupabaseClient) {
+  return await supabase.from('user_addresses').select();
 }
 
 export type GetUserAddresses = Awaited<
@@ -164,13 +161,3 @@ export async function getUser(
 ) {
   return await supabase.from('users').select().eq('id', user_id).single();
 }
-
-//
-/*export type InsertUserData = Awaited<ReturnType<typeof insertUser>>['data'];
-export type InsertUserError = Awaited<ReturnType<typeof insertUser>>['error'];
-export type InsertUser = {
-  data: InsertUserData;
-  // data: User;
-  error: InsertUserError;
-};
-*/
