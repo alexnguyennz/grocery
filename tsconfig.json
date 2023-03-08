@@ -15,8 +15,8 @@
     "jsx": "preserve",
     "incremental": true,
     "paths": {
-      "@/components/*": ["./components/*"],
       "@/src/*": ["./src/*"],
+      "@/components/*": ["./components/*"],
       "@/types/*": ["./types/*"]
     }
   },
