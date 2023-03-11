@@ -6,7 +6,7 @@ import type { AppProps } from 'next/app';
 /*** APP ***/
 import '@/src/styles/globals.css';
 import Layout from '@/components/layout';
-import '@fontsource/mulish';
+//import '@fontsource/mulish';
 
 /*** SUPABASE */
 import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';

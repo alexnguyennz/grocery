@@ -11,16 +11,15 @@ import { Box } from '@mantine/core';
 import Main from './main';
 
 export default function Layout({ children }: { children: ReactNode }) {
-  const Main = dynamic(() => import('./main'), { ssr: false });
+  //const Main = dynamic(() => import('./main'), { ssr: false });
 
   return (
     <>
       <Head>
-        <title>Online Grocery Shopping - grocery</title>
+        <title>Online Grocery Shopping - Grocery</title>
         <meta
           name="description"
-          content="Online grocery shopping."
-          key="desc"
+          content="Online grocery shopping with Grocery"
         />
       </Head>
       <Box
@@ -31,11 +30,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               : theme.colors.gray[1],
         })}
       >
-        <div className="flex flex-col min-h-screen ">
-          <Head>
-            <title>Online Grocery Shopping - grocery</title>
-          </Head>
-
+        <div className="flex flex-col min-h-screen">
           <Header />
 
           <Main>{children}</Main>

@@ -56,15 +56,10 @@ function DepartmentIcons({ icon }: { icon: string }) {
 export default function HeaderDepartments() {
   return (
     <>
-      <Menu
-        withArrow
-        shadow="md"
-        transition="scale"
-        // width="100%"
-        //classNames={{ dropdown: 'w-full' }}
-      >
+      <Menu withArrow shadow="md" transition="scale">
         <Menu.Target>
           <Button
+            size="md"
             color="cyan.6"
             leftIcon={<IconCircleArrowDownFilled size={20} />}
           >
@@ -74,7 +69,7 @@ export default function HeaderDepartments() {
 
         <Menu.Dropdown>
           <Menu.Label className="text-center">Departments</Menu.Label>
-          <div className="columns-3 gap-0">
+          <div className="columns-2 lg:columns-3 gap-0">
             {departments.map((department) => (
               <Menu.Item
                 key={department.slug}

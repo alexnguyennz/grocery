@@ -27,7 +27,7 @@ export default function Home() {
   return (
     <div className="space-y-10">
       <div className="space-y-3 flex flex-col">
-        <Title order={2} className="text-center">
+        <Title order={2} weight={800} className="text-center">
           Weekly Specials
         </Title>
 
@@ -38,7 +38,7 @@ export default function Home() {
         )}
       </div>
       <div className="space-y-3 flex flex-col">
-        <Title order={2} className="text-center">
+        <Title order={2} weight={800} className="text-center">
           Top Picks
         </Title>
 

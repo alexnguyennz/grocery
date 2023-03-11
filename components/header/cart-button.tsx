@@ -30,6 +30,7 @@ export default function CartButton() {
 
   return (
     <Button
+      size="md"
       component={Link}
       href="/checkout/revieworder"
       leftIcon={<IconShoppingCart size={20} />}

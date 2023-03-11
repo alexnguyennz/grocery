@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
 
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import { Autocomplete, Paper, Title, TextInput } from '@mantine/core';
+import { Autocomplete, Paper } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
 
 /*** STATE ***/
@@ -50,8 +49,6 @@ export default function Header() {
     if (isReady && query.q) setSearchQuery(query.q as string);
   }, [isReady, query]);
 
-  //const Auth = dynamic(() => import('./auth'), { ssr: false });
-
   return (
     <>
       <header className="shadow-sm">
@@ -84,6 +81,7 @@ export default function Header() {
                   }}
                 >
                   <Autocomplete
+                    size="md"
                     value={searchQuery}
                     onChange={setSearchQuery}
                     onItemSubmit={(item) => {
