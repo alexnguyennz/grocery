@@ -34,6 +34,8 @@ export default function ProductCarousel({
             },
           },
         }}
+        nextControlLabel="Next carousel page"
+        previousControlLabel="Previous carousel page"
       >
         {[0, 1, 2, 3, 4, 5].map((number, idx) => (
           <Carousel.Slide key={number}>

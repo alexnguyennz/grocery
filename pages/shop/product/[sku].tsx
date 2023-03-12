@@ -80,7 +80,7 @@ export default function Product({ sku }: { sku: string }) {
         <Skeleton h={20} />
       )}
 
-      <div className="grid md:grid-cols-2 gap-10 mt-5">
+      <div className="mt-5 grid gap-10 md:grid-cols-2">
         <div>
           {images && images?.data ? (
             <Carousel
@@ -96,7 +96,7 @@ export default function Product({ sku }: { sku: string }) {
             >
               {images.data.data.map((image: { name: string }) => (
                 <Carousel.Slide key={image.name}>
-                  <div className="w-full mx-auto bg-white">
+                  <div className="mx-auto w-full bg-white">
                     <Image
                       src={`${process.env.NEXT_PUBLIC_SUPABASE_BUCKET}${sku}/${image.name}`}
                       width={500}
