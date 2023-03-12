@@ -50,27 +50,32 @@ export default function Product({ sku }: { sku: string }) {
 
   return (
     <>
-      <Head>
-        <title>{'Buy ' + capitalize('test')}</title>
-      </Head>
-
       {data ? (
-        <ProductsLayout.Breadcrumbs>
-          <Link href={`/shop/browse/${data.data.shelf.aisle.department.slug}`}>
-            {data.data.shelf.aisle.department.name}
-          </Link>
-          <Link
-            href={`/shop/browse/${data.data.shelf.aisle.department.slug}/${data.data.shelf.aisle.slug}`}
-          >
-            {data.data.shelf.aisle.name}
-          </Link>
-          <Link
-            href={`/shop/browse/${data.data.shelf.aisle.department.slug}/${data.data.shelf.aisle.slug}/${data.data.shelf.slug}`}
-          >
-            {data.data.shelf.name}
-          </Link>
-          <Link href="#">{capitalize(data.data.name)}</Link>
-        </ProductsLayout.Breadcrumbs>
+        <>
+          <Head>
+            <title>{'Buy ' + capitalize(data.data.name)}</title>
+          </Head>
+          <ProductsLayout.Breadcrumbs>
+            <Link
+              href={`/shop/browse/${data.data.shelf.aisle.department.slug}`}
+            >
+              {data.data.shelf.aisle.department.name}
+            </Link>
+            <Link
+              href={`/shop/browse/${data.data.shelf.aisle.department.slug}/${data.data.shelf.aisle.slug}`}
+            >
+              {data.data.shelf.aisle.name}
+            </Link>
+            <Link
+              href={`/shop/browse/${data.data.shelf.aisle.department.slug}/${data.data.shelf.aisle.slug}/${data.data.shelf.slug}`}
+            >
+              {data.data.shelf.name}
+            </Link>
+            <Link href="#" className="capitalize">
+              {data.data.name}
+            </Link>
+          </ProductsLayout.Breadcrumbs>
+        </>
       ) : (
         <Skeleton h={20} />
       )}

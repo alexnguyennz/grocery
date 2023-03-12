@@ -57,7 +57,7 @@ export default async function handler(req: NextRequest, res: NextResponse) {
   const response = await supabase
     .from('products')
     .select(
-      `*, shelf!inner(value), aisle!inner(value), department!inner(value)`,
+      `sku, name, price, description, unit, size, origins, ingredients, nutrition, claims, shelf!inner(value), aisle!inner(value), department!inner(value)`,
       {
         count: 'exact',
         head: false,
@@ -132,7 +132,9 @@ export default async function handler(req: NextRequest, res: NextResponse) {
   } else if (aisle) {
     const { data } = await supabase
       .from('shelf')
-      .select('*, products!inner(name), aisle!inner(*, department!inner(*))')
+      .select(
+        '*, products!inner(name), aisle!inner(name, slug, department!inner(name, slug))'
+      )
       .match(departmentFilter)
       .match(categoriesFilter)
       .textSearch('products.name', q)
@@ -155,7 +157,7 @@ export default async function handler(req: NextRequest, res: NextResponse) {
     // get all aisles for this department and search term
     const { data } = await supabase
       .from('aisle')
-      .select('*, products!inner(*), department!inner(*)')
+      .select('name, slug, products!inner(*), department!inner(*)')
       .match(productFilter)
       .match(categoriesFilter)
       .textSearch('products.name', q)
@@ -171,7 +173,7 @@ export default async function handler(req: NextRequest, res: NextResponse) {
   } else {
     const { data } = await supabase
       .from('department')
-      .select('*, products!inner(name)')
+      .select('name, slug, products!inner(name)')
       .match(categoriesFilter)
       .textSearch('products.name', q)
       .throwOnError();

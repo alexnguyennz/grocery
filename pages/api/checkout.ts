@@ -57,8 +57,6 @@ export default async function handler(
       if (error) console.log('Error inserting order items', error);
     }
 
-    console.log('order', order);
-
     res.status(200).json(order);
   }
 }

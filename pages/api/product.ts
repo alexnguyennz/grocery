@@ -14,7 +14,9 @@ export default async function handler(req: NextRequest, res: NextResponse) {
 
   const response = await supabase
     .from('products')
-    .select('*, shelf(*, aisle(*, department(*)))')
+    .select(
+      'sku, name, price, description, unit, size, origins, ingredients, nutrition, claims, shelf(name, slug, aisle(name, slug, department(name, slug)))'
+    )
     .eq('sku', sku)
     .single();
 

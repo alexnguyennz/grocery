@@ -55,7 +55,10 @@ export default async function handler(req: NextRequest, res: NextResponse) {
 
   const response = await supabase
     .from('products')
-    .select(`*, ${select}`, { count: 'exact', head: false })
+    .select(
+      `sku, name, price, description, unit, size, origins, ingredients, nutrition, claims, ${select}`,
+      { count: 'exact', head: false }
+    )
     .match(categoryFilter)
     .order(sortColumn as string, { ascending: sortBy?.[1] === 'asc' })
     .throwOnError()

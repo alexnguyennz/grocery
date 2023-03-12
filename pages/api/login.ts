@@ -22,11 +22,11 @@ export default async function handler(
     // query user that should be saved
     const { data } = await supabase
       .from('users')
-      .select('*, address:selected_user_address(*)')
+      .select(
+        'id, first_name, last_name, phone_number, date_of_birth, address:selected_user_address(address_line1, address_line2, city, post_code)'
+      )
       .eq('id', user?.id)
       .single();
-
-    console.log('data', data);
 
     if (error) res.status(400).json(error);
 

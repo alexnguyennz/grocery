@@ -25,25 +25,6 @@ export type CartTwo = {
 export type UserAddresses =
   Database['public']['Tables']['user_addresses']['Row'];
 
-/*** /shop/productdetails ***/
-export async function getProduct(
-  supabase: SupabaseClient,
-  stockcode: string | string[] | undefined
-) {
-  return await supabase
-    .from('products')
-    .select('*, shelf(*, aisle(*, department(*)))')
-    .eq('sku', stockcode)
-    .single();
-}
-
-export async function getProductImages(
-  supabase: SupabaseClient,
-  sku: string | undefined
-) {
-  return await supabase.storage.from('product').list(sku);
-}
-
 type Shelf = Database['public']['Tables']['shelf']['Row'];
 type Aisle = Database['public']['Tables']['aisle']['Row'];
 
@@ -51,14 +32,6 @@ export type User = Database['public']['Tables']['users']['Row'] & {
   selected_user_address: UserAddresses;
 };
 export type Department = Database['public']['Tables']['department']['Row'];
-
-export type ProductDetails = Awaited<ReturnType<typeof getProduct>>['data'] & {
-  shelf: Shelf[];
-  aisle: Aisle[];
-  department: Department[];
-};
-
-export type Storage = Awaited<ReturnType<typeof getProductImages>>['data'];
 
 /*** /shop/browse/department/ ***/
 export async function getDepartmentAisles(
@@ -161,3 +134,31 @@ export async function getUser(
 ) {
   return await supabase.from('users').select().eq('id', user_id).single();
 }
+
+/*** To cleanup ***/
+/*** /shop/product/ ***/
+export async function getProduct(
+  supabase: SupabaseClient,
+  stockcode: string | string[] | undefined
+) {
+  return await supabase
+    .from('products')
+    .select('*, shelf(*, aisle(*, department(*)))')
+    .eq('sku', stockcode)
+    .single();
+}
+
+export type ProductDetails = Awaited<ReturnType<typeof getProduct>>['data'] & {
+  shelf: Shelf[];
+  aisle: Aisle[];
+  department: Department[];
+};
+
+export async function getProductImages(
+  supabase: SupabaseClient,
+  sku: string | undefined
+) {
+  return await supabase.storage.from('product').list(sku);
+}
+
+export type Storage = Awaited<ReturnType<typeof getProductImages>>['data'];

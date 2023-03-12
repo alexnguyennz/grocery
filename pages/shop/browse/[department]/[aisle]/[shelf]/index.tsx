@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Head from 'next/head';
 import NextLink from 'next/link';
 
@@ -58,7 +58,6 @@ export default function SubCategory({
   const [sort, setSort] = useState('sku');
   const [pageSize, setPageSize] = useState(20);
   const [page, setPage] = useState(1);
-  const [categoriesOpened, setCategoriesOpened] = useState(true);
 
   /*** QUERY ***/
   const { data } = useQuery({

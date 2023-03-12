@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+
 /*** MANTINE ***/
 import {
   Accordion,
@@ -35,13 +36,12 @@ type NutritionHeaderColumn = {
   suffix: string | null;
 };
 
-export default function ProductDetails({ product }: any) {
+export default function ProductDetails({ product }: ProductDetails) {
   const {
     sku,
     name,
     price,
     description,
-    shelf,
     unit,
     size,
     origins,

@@ -11,7 +11,6 @@ import { useQuery } from '@tanstack/react-query';
 
 /*** COMPONENTS ***/
 import ProductsLayout from '@/components/products/products';
-import ProductCard from '@/components/product/product-card';
 import ProductFilter from '@/components/product/product-filter';
 import ProductPagination from '@/components/product/product-pagination';
 
