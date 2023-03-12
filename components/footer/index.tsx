@@ -124,6 +124,7 @@ export default function Footer() {
                 stroke={1.5}
               />
             }
+            aria-label="Toggle light/dark mode"
           />
         </div>
       </div>
