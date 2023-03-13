@@ -34,7 +34,7 @@ export default function Home() {
         {!specialsData?.data?.data ? (
           <Carousel />
         ) : (
-          <Carousel products={specialsData?.data?.data} priority={true} />
+          <Carousel products={specialsData?.data?.data} />
         )}
       </div>
       <div className="flex flex-col space-y-3">

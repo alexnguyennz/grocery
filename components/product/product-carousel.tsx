@@ -9,10 +9,8 @@ import { type Products } from '@/src/utils/supabase';
 
 export default function ProductCarousel({
   products,
-  priority,
 }: {
   products?: Products[];
-  priority?: boolean;
 }) {
   if (!products) {
     return (
@@ -72,9 +70,9 @@ export default function ProductCarousel({
       nextControlLabel="Next carousel page"
       previousControlLabel="Previous carousel page"
     >
-      {products.map((product) => (
+      {products.map((product, idx) => (
         <Carousel.Slide key={product.id}>
-          <ProductCard product={product} priority={priority} />
+          <ProductCard product={product} priority={idx ? true : false} />
         </Carousel.Slide>
       ))}
     </Carousel>
