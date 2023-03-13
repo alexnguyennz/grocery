@@ -26,7 +26,7 @@ export default function Home() {
 
   return (
     <div className="space-y-10">
-      <div className="space-y-3 flex flex-col">
+      <div className="flex flex-col space-y-3">
         <Title order={2} weight={800} className="text-center">
           Weekly Specials
         </Title>
@@ -34,10 +34,10 @@ export default function Home() {
         {!specialsData?.data?.data ? (
           <Carousel />
         ) : (
-          <Carousel products={specialsData?.data?.data} />
+          <Carousel products={specialsData?.data?.data} priority={true} />
         )}
       </div>
-      <div className="space-y-3 flex flex-col">
+      <div className="flex flex-col space-y-3">
         <Title order={2} weight={800} className="text-center">
           Top Picks
         </Title>
