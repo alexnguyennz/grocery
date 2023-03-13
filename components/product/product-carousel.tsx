@@ -72,7 +72,7 @@ export default function ProductCarousel({
     >
       {products.map((product, idx) => (
         <Carousel.Slide key={product.id}>
-          <ProductCard product={product} priority={idx ? true : false} />
+          <ProductCard product={product} priority={idx === 0 ? true : false} />
         </Carousel.Slide>
       ))}
     </Carousel>
