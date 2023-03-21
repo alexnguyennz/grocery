@@ -7,6 +7,8 @@ import ProductCard from '@/components/product/product-card';
 
 import { type Products } from '@/src/utils/supabase';
 
+import { Prisma } from '@prisma/client';
+
 export default function ProductCarousel({
   products,
 }: {
@@ -72,7 +74,8 @@ export default function ProductCarousel({
     >
       {products.map((product, idx) => (
         <Carousel.Slide key={product.id}>
-          <ProductCard product={product} priority={idx === 0 ? true : false} />
+          <ProductCard product={product} priority={idx === 0 ? true : false} />{' '}
+          {/* set the first image to have priority */}
         </Carousel.Slide>
       ))}
     </Carousel>

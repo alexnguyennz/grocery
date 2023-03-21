@@ -3,7 +3,7 @@ import type { NextRequest, NextResponse } from 'next/server';
 import { createMiddlewareSupabaseClient } from '@supabase/auth-helpers-nextjs';
 
 export const config = {
-  runtime: 'experimental-edge',
+  runtime: 'edge',
 };
 
 export default async function handler(req: NextRequest, res: NextResponse) {

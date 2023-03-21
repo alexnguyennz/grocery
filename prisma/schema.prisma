@@ -1,0 +1,466 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema", "views"]
+}
+
+datasource supabase {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["auth", "public"]
+}
+
+model audit_log_entries {
+  instance_id String?   @supabase.Uuid
+  id          String    @id @supabase.Uuid
+  payload     Json?     @supabase.Json
+  created_at  DateTime? @supabase.Timestamptz(6)
+  ip_address  String    @default("") @supabase.VarChar(64)
+
+  @@index([instance_id], map: "audit_logs_instance_id_idx")
+  @@schema("auth")
+}
+
+model identities {
+  id              String
+  user_id         String     @supabase.Uuid
+  identity_data   Json
+  provider        String
+  last_sign_in_at DateTime?  @supabase.Timestamptz(6)
+  created_at      DateTime?  @supabase.Timestamptz(6)
+  updated_at      DateTime?  @supabase.Timestamptz(6)
+  email           String?    @default(dbgenerated("lower((identity_data ->> 'email'::text))"))
+  users           auth_users @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([provider, id])
+  @@index([email])
+  @@index([user_id])
+  @@schema("auth")
+}
+
+model instances {
+  id              String    @id @supabase.Uuid
+  uuid            String?   @supabase.Uuid
+  raw_base_config String?
+  created_at      DateTime? @supabase.Timestamptz(6)
+  updated_at      DateTime? @supabase.Timestamptz(6)
+
+  @@schema("auth")
+}
+
+model mfa_amr_claims {
+  session_id            String   @supabase.Uuid
+  created_at            DateTime @supabase.Timestamptz(6)
+  updated_at            DateTime @supabase.Timestamptz(6)
+  authentication_method String
+  id                    String   @id(map: "amr_id_pk") @supabase.Uuid
+  sessions              sessions @relation(fields: [session_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([session_id, authentication_method], map: "mfa_amr_claims_session_id_authentication_method_pkey")
+  @@schema("auth")
+}
+
+model mfa_challenges {
+  id          String      @id @supabase.Uuid
+  factor_id   String      @supabase.Uuid
+  created_at  DateTime    @supabase.Timestamptz(6)
+  verified_at DateTime?   @supabase.Timestamptz(6)
+  ip_address  String      @supabase.Inet
+  mfa_factors mfa_factors @relation(fields: [factor_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "mfa_challenges_auth_factor_id_fkey")
+
+  @@schema("auth")
+}
+
+model mfa_factors {
+  id             String           @id @supabase.Uuid
+  user_id        String           @supabase.Uuid
+  friendly_name  String?
+  factor_type    factor_type
+  status         factor_status
+  created_at     DateTime         @supabase.Timestamptz(6)
+  updated_at     DateTime         @supabase.Timestamptz(6)
+  secret         String?
+  mfa_challenges mfa_challenges[]
+  users          auth_users       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id, created_at], map: "factor_id_created_at_idx")
+  @@schema("auth")
+}
+
+model refresh_tokens {
+  instance_id String?   @supabase.Uuid
+  id          BigInt    @id @default(autoincrement())
+  token       String?   @unique(map: "refresh_tokens_token_unique") @supabase.VarChar(255)
+  user_id     String?   @supabase.VarChar(255)
+  revoked     Boolean?
+  created_at  DateTime? @supabase.Timestamptz(6)
+  updated_at  DateTime? @supabase.Timestamptz(6)
+  parent      String?   @supabase.VarChar(255)
+  session_id  String?   @supabase.Uuid
+  sessions    sessions? @relation(fields: [session_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([instance_id])
+  @@index([instance_id, user_id])
+  @@index([parent])
+  @@index([session_id, revoked])
+  @@index([token])
+  @@schema("auth")
+}
+
+model saml_providers {
+  id                String        @id @supabase.Uuid
+  sso_provider_id   String        @supabase.Uuid
+  entity_id         String        @unique
+  metadata_xml      String
+  metadata_url      String?
+  attribute_mapping Json?
+  created_at        DateTime?     @supabase.Timestamptz(6)
+  updated_at        DateTime?     @supabase.Timestamptz(6)
+  sso_providers     sso_providers @relation(fields: [sso_provider_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([sso_provider_id])
+  @@schema("auth")
+}
+
+model saml_relay_states {
+  id              String        @id @supabase.Uuid
+  sso_provider_id String        @supabase.Uuid
+  request_id      String
+  for_email       String?
+  redirect_to     String?
+  from_ip_address String?       @supabase.Inet
+  created_at      DateTime?     @supabase.Timestamptz(6)
+  updated_at      DateTime?     @supabase.Timestamptz(6)
+  sso_providers   sso_providers @relation(fields: [sso_provider_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([for_email])
+  @@index([sso_provider_id])
+  @@schema("auth")
+}
+
+model schema_migrations {
+  version String @id @supabase.VarChar(255)
+
+  @@schema("auth")
+}
+
+model sessions {
+  id             String           @id @supabase.Uuid
+  user_id        String           @supabase.Uuid
+  created_at     DateTime?        @supabase.Timestamptz(6)
+  updated_at     DateTime?        @supabase.Timestamptz(6)
+  factor_id      String?          @supabase.Uuid
+  aal            aal_level?
+  not_after      DateTime?        @supabase.Timestamptz(6)
+  mfa_amr_claims mfa_amr_claims[]
+  refresh_tokens refresh_tokens[]
+  users          auth_users       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id])
+  @@index([user_id, created_at], map: "user_id_created_at_idx")
+  @@schema("auth")
+}
+
+model sso_domains {
+  id              String        @id @supabase.Uuid
+  sso_provider_id String        @supabase.Uuid
+  domain          String
+  created_at      DateTime?     @supabase.Timestamptz(6)
+  updated_at      DateTime?     @supabase.Timestamptz(6)
+  sso_providers   sso_providers @relation(fields: [sso_provider_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([sso_provider_id])
+  @@schema("auth")
+}
+
+model sso_providers {
+  id                String              @id @supabase.Uuid
+  resource_id       String?
+  created_at        DateTime?           @supabase.Timestamptz(6)
+  updated_at        DateTime?           @supabase.Timestamptz(6)
+  saml_providers    saml_providers[]
+  saml_relay_states saml_relay_states[]
+  sso_domains       sso_domains[]
+
+  @@schema("auth")
+}
+
+model auth_users {
+  instance_id                 String?       @supabase.Uuid
+  id                          String        @id @supabase.Uuid
+  aud                         String?       @supabase.VarChar(255)
+  role                        String?       @supabase.VarChar(255)
+  email                       String?       @supabase.VarChar(255)
+  encrypted_password          String?       @supabase.VarChar(255)
+  email_confirmed_at          DateTime?     @supabase.Timestamptz(6)
+  invited_at                  DateTime?     @supabase.Timestamptz(6)
+  confirmation_token          String?       @supabase.VarChar(255)
+  confirmation_sent_at        DateTime?     @supabase.Timestamptz(6)
+  recovery_token              String?       @supabase.VarChar(255)
+  recovery_sent_at            DateTime?     @supabase.Timestamptz(6)
+  email_change_token_new      String?       @supabase.VarChar(255)
+  email_change                String?       @supabase.VarChar(255)
+  email_change_sent_at        DateTime?     @supabase.Timestamptz(6)
+  last_sign_in_at             DateTime?     @supabase.Timestamptz(6)
+  raw_app_meta_data           Json?
+  raw_user_meta_data          Json?
+  is_super_admin              Boolean?
+  created_at                  DateTime?     @supabase.Timestamptz(6)
+  updated_at                  DateTime?     @supabase.Timestamptz(6)
+  phone                       String?       @unique
+  phone_confirmed_at          DateTime?     @supabase.Timestamptz(6)
+  phone_change                String?       @default("")
+  phone_change_token          String?       @default("") @supabase.VarChar(255)
+  phone_change_sent_at        DateTime?     @supabase.Timestamptz(6)
+  confirmed_at                DateTime?     @default(dbgenerated("LEAST(email_confirmed_at, phone_confirmed_at)")) @supabase.Timestamptz(6)
+  email_change_token_current  String?       @default("") @supabase.VarChar(255)
+  email_change_confirm_status Int?          @default(0) @supabase.SmallInt
+  banned_until                DateTime?     @supabase.Timestamptz(6)
+  reauthentication_token      String?       @default("") @supabase.VarChar(255)
+  reauthentication_sent_at    DateTime?     @supabase.Timestamptz(6)
+  is_sso_user                 Boolean       @default(false)
+  deleted_at                  DateTime?     @supabase.Timestamptz(6)
+  identities                  identities[]
+  mfa_factors                 mfa_factors[]
+  sessions                    sessions[]
+  users                       public_users?
+
+  @@index([instance_id])
+  @@map("users")
+  @@schema("auth")
+}
+
+model aisle {
+  id                                      Int        @id @default(autoincrement())
+  value                                   Int        @unique
+  name                                    String
+  slug                                    String?
+  department                              Int
+  department_aisle_departmentTodepartment department @relation("aisle_departmentTodepartment", fields: [department], references: [value], onDelete: NoAction, onUpdate: NoAction)
+  products_products_aisleToaisle          products[] @relation("products_aisleToaisle")
+  shelf_shelf_aisleToaisle                shelf[]    @relation("shelf_aisleToaisle")
+
+  @@schema("public")
+}
+
+model department {
+  id                                       Int        @id(map: "departments_pkey") @default(autoincrement())
+  name                                     String     @unique(map: "departments_name_key")
+  slug                                     String     @unique(map: "departments_slug_key")
+  value                                    Int        @unique(map: "departments_value_key")
+  aisle_aisle_departmentTodepartment       aisle[]    @relation("aisle_departmentTodepartment")
+  products_products_departmentTodepartment products[] @relation("products_departmentTodepartment")
+
+  @@schema("public")
+}
+
+model order_items {
+  id         Int       @id(map: "order_item_pkey") @default(autoincrement())
+  created_at DateTime? @default(now()) @supabase.Timestamptz(6)
+  order_id   Int?
+  price      Decimal?  @supabase.Decimal
+  quantity   Decimal?  @supabase.Decimal
+  sku        BigInt?
+  orders     orders?   @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@schema("public")
+}
+
+model orders {
+  id          Int           @id @default(autoincrement())
+  created_at  DateTime?     @default(now()) @supabase.Timestamptz(6)
+  user_id     String?       @supabase.Uuid
+  status      String?       @default("pending")
+  address     String?
+  price       Decimal?      @supabase.Decimal
+  payment_id  String?       @unique
+  order_items order_items[]
+  users       public_users? @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@schema("public")
+}
+
+model products {
+  id                                         Int         @id(map: "items_test_pkey") @default(autoincrement())
+  created_at                                 DateTime?   @default(now()) @supabase.Timestamptz(6)
+  sku                                        Int         @unique
+  name                                       String?
+  brand                                      String?
+  generic_name                               String?
+  variety                                    String?
+  breadcrumb                                 Json?
+  images                                     Json[]
+  unit                                       String?
+  quantity                                   Json?
+  product_stores_stock_level                 String?
+  price                                      Json?
+  size                                       Json?
+  alcohol                                    Int?
+  health_star_rating                         Int?
+  origins                                    String[]
+  description                                String?
+  allergens                                  String[]
+  claims                                     String[]
+  endorsements                               String[]
+  ingredients                                Json?
+  nutrition                                  Json[]
+  warnings                                   String[]
+  contents                                   String[]
+  product_tags                               String[]
+  average_weight_per_unit                    Float?
+  supports_both_each_and_kg_pricing          Boolean?
+  selected_purchasing_unit                   String?
+  availability_status                        String?
+  department                                 Int?
+  aisle                                      Int?
+  shelf                                      Int?
+  original_images                            Json[]
+  aisle_products_aisleToaisle                aisle?      @relation("products_aisleToaisle", fields: [aisle], references: [value], onDelete: NoAction, onUpdate: NoAction)
+  department_products_departmentTodepartment department? @relation("products_departmentTodepartment", fields: [department], references: [value], onDelete: NoAction, onUpdate: NoAction)
+  shelf_products_shelfToshelf                shelf?      @relation("products_shelfToshelf", fields: [shelf], references: [value], onDelete: NoAction, onUpdate: NoAction)
+
+  @@schema("public")
+}
+
+model shelf {
+  id                             Int        @id @default(autoincrement())
+  value                          Int        @unique
+  name                           String
+  slug                           String?
+  aisle                          Int
+  products_products_shelfToshelf products[] @relation("products_shelfToshelf")
+  aisle_shelf_aisleToaisle       aisle      @relation("shelf_aisleToaisle", fields: [aisle], references: [value], onDelete: NoAction, onUpdate: NoAction)
+
+  @@schema("public")
+}
+
+model user_addresses {
+  id                                                Int            @id @default(autoincrement())
+  created_at                                        DateTime?      @default(now()) @supabase.Timestamptz(6)
+  user_id                                           String         @supabase.Uuid
+  address_line1                                     String
+  address_line2                                     String
+  city                                              String
+  post_code                                         String
+  users_user_addresses_user_idTousers               public_users   @relation("user_addresses_user_idTousers", fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_users_selected_user_addressTouser_addresses public_users[] @relation("users_selected_user_addressTouser_addresses")
+
+  @@schema("public")
+}
+
+model public_users {
+  id                                                         String           @id @supabase.Uuid
+  first_name                                                 String?
+  last_name                                                  String?
+  phone_number                                               String?
+  date_of_birth                                              DateTime?        @supabase.Date
+  email                                                      String?
+  selected_user_address                                      Int?
+  cart_session                                               Json[]
+  orders                                                     orders[]
+  user_addresses_user_addresses_user_idTousers               user_addresses[] @relation("user_addresses_user_idTousers")
+  users                                                      auth_users       @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user_addresses_users_selected_user_addressTouser_addresses user_addresses?  @relation("users_selected_user_addressTouser_addresses", fields: [selected_user_address], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("users")
+  @@schema("public")
+}
+
+view get_specials {
+  id                                Int?
+  created_at                        DateTime? @supabase.Timestamptz(6)
+  sku                               Int @unique
+  name                              String?
+  brand                             String?
+  generic_name                      String?
+  variety                           String?
+  breadcrumb                        Json?
+  images                            Json[]
+  unit                              String?
+  quantity                          Json?
+  product_stores_stock_level        String?
+  price                             Json?
+  size                              Json?
+  alcohol                           Int?
+  health_star_rating                Int?
+  origins                           String[]
+  description                       String?
+  allergens                         String[]
+  claims                            String[]
+  endorsements                      String[]
+  ingredients                       Json?
+  nutrition                         Json[]
+  warnings                          String[]
+  contents                          String[]
+  product_tags                      String[]
+  average_weight_per_unit           Float?
+  supports_both_each_and_kg_pricing Boolean?
+  selected_purchasing_unit          String?
+  availability_status               String?
+  department                        Int?
+  aisle                             Int?
+  shelf                             Int?
+  original_images                   Json[]
+
+  @@schema("public")
+}
+
+view get_random_picks {
+  id                                Int?
+  created_at                        DateTime? @supabase.Timestamptz(6)
+  sku                               Int @unique
+  name                              String?
+  brand                             String?
+  generic_name                      String?
+  variety                           String?
+  breadcrumb                        Json?
+  images                            Json[]
+  unit                              String?
+  quantity                          Json?
+  product_stores_stock_level        String?
+  price                             Json?
+  size                              Json?
+  alcohol                           Int?
+  health_star_rating                Int?
+  origins                           String[]
+  description                       String?
+  allergens                         String[]
+  claims                            String[]
+  endorsements                      String[]
+  ingredients                       Json?
+  nutrition                         Json[]
+  warnings                          String[]
+  contents                          String[]
+  product_tags                      String[]
+  average_weight_per_unit           Float?
+  supports_both_each_and_kg_pricing Boolean?
+  selected_purchasing_unit          String?
+  availability_status               String?
+  department                        Int?
+  aisle                             Int?
+  shelf                             Int?
+  original_images                   Json[]
+
+  @@schema("public")
+}
+
+enum aal_level {
+  aal1
+  aal2
+  aal3
+
+  @@schema("auth")
+}
+
+enum factor_status {
+  unverified
+  verified
+
+  @@schema("auth")
+}
+
+enum factor_type {
+  totp
+  webauthn
+
+  @@schema("auth")
+}
