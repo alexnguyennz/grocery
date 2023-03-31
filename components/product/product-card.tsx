@@ -1,15 +1,16 @@
-import NextLink from 'next/link';
-import Image from 'next/image';
+import NextLink from "next/link";
+import Image from "next/image";
 
-import { Card, Skeleton, Stack, Text } from '@mantine/core';
+import { Card, Skeleton, Stack, Text } from "@mantine/core";
 
 /*** COMPONENTS ***/
-import Quantity from '@/components/product/product-quantity';
+import Quantity from "@/components/product/product-quantity";
 
 /*** UTILS */
-import capitalize from '@/src/utils/capitalize';
+import capitalize from "@/src/utils/capitalize";
 
-import { type Products } from '@/src/utils/supabase';
+import { type Products } from "@/src/utils/supabase";
+import type { products } from "@prisma/client";
 
 type Price = {
   isSpecial: boolean;
@@ -21,7 +22,7 @@ export default function ProductCard({
   product,
   priority = false,
 }: {
-  product: Products;
+  product: products;
   priority?: boolean;
 }) {
   const { sku, name, unit } = product;
@@ -35,14 +36,14 @@ export default function ProductCard({
       withBorder
       sx={(theme) => ({
         backgroundColor:
-          theme.colorScheme === 'dark' ? theme.colors.dark[7] : '#ffffff',
-        transition: 'transform 150ms ease',
-        '&:hover': {
+          theme.colorScheme === "dark" ? theme.colors.dark[7] : "#ffffff",
+        transition: "transform 150ms ease",
+        "&:hover": {
           //transform: 'scale(1.05)',
         },
       })}
     >
-      <Card.Section className="bg-white p-5 mb-3">
+      <Card.Section className="mb-3 bg-white p-5">
         <NextLink href={`/shop/product/${sku}`}>
           <Image
             src={`${process.env.NEXT_PUBLIC_SUPABASE_BUCKET}/${sku}/${sku}.jpg`}
@@ -62,11 +63,11 @@ export default function ProductCard({
       </div>
 
       <div className="mt-auto space-y-3 text-right">
-        <div className="flex justify-between items-end">
+        <div className="flex items-end justify-between">
           <div className="">
-            <Text size="xl" weight="bold" color={`${price.isSpecial && 'red'}`}>
+            <Text size="xl" weight="bold" color={`${price.isSpecial && "red"}`}>
               ${price.salePrice.toFixed(2)}
-              {unit === 'Kg' && (
+              {unit === "Kg" && (
                 <span className="text-lg">{unit.toLowerCase()}</span>
               )}
             </Text>

@@ -1,45 +1,98 @@
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import Head from 'next/head';
-import type { GetServerSideProps } from 'next';
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import Head from "next/head";
+import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
 /*** MANTINE ***/
-import { Skeleton } from '@mantine/core';
-import { Carousel } from '@mantine/carousel';
+import { Skeleton } from "@mantine/core";
+import { Carousel } from "@mantine/carousel";
 
-import ProductsLayout from '@/components/products/products';
+import ProductsLayout from "@/components/products/products";
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 
-import ProductDetails from '@/components/product/product-details';
+import ProductDetails from "@/components/product/product-details";
 
 /*** UTILS ***/
-import capitalize from '@/src/utils/capitalize';
+import capitalize from "@/src/utils/capitalize";
+
+import { prisma } from "@/prisma/client";
+import type { products } from "@prisma/client";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { sku } = ctx.query;
+
+  const data = await prisma.products.findUnique({
+    where: {
+      sku: Number(sku),
+    },
+    select: {
+      sku: true,
+      name: true,
+      price: true,
+      description: true,
+      unit: true,
+      size: true,
+      origins: true,
+      ingredients: true,
+      nutrition: true,
+      claims: true,
+      shelf_products_shelfToshelf: {
+        select: {
+          name: true,
+          slug: true,
+          aisle_shelf_aisleToaisle: {
+            select: {
+              name: true,
+              slug: true,
+              department_aisle_departmentTodepartment: {
+                select: {
+                  name: true,
+                  slug: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
   return {
     props: {
       sku,
+      product: JSON.parse(JSON.stringify(data)),
     },
   };
 };
 
-export default function Product({ sku }: { sku: string }) {
+export default function Product({
+  sku,
+  product,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   /*** QUERIES ***/
-  const { data } = useQuery({
-    queryKey: ['product', sku],
+  console.log("product", product);
+
+  const { name, shelf_products_shelfToshelf: shelf } = product;
+  const { aisle_shelf_aisleToaisle: aisle } = shelf;
+  const { department_aisle_departmentTodepartment: department } = aisle;
+
+  /* const { data } = useQuery({
+    queryKey: ["product", sku],
     queryFn: async () => {
       return fetch(`/api/product?sku=${sku}`).then((response) =>
         response.json()
       );
     },
+    //initialData: product,
     keepPreviousData: true,
-  });
+  }); */
+
+  //console.log("react query", data);
 
   const images = useQuery({
-    queryKey: ['productImages', sku],
+    queryKey: ["productImages", sku],
     queryFn: async () => {
       return fetch(`/api/product-images?sku=${sku}`).then((response) =>
         response.json()
@@ -48,37 +101,33 @@ export default function Product({ sku }: { sku: string }) {
     keepPreviousData: true,
   });
 
+  /*shelf_products_shelfToshelf: {
+        aisle_shelf_aisleToaisle: {
+            department_aisle_departmentTodepartment: { */
+
   return (
     <>
-      {data ? (
-        <>
-          <Head>
-            <title>{'Buy ' + capitalize(data.data.name)}</title>
-          </Head>
-          <ProductsLayout.Breadcrumbs>
-            <Link
-              href={`/shop/browse/${data.data.shelf.aisle.department.slug}`}
-            >
-              {data.data.shelf.aisle.department.name}
-            </Link>
-            <Link
-              href={`/shop/browse/${data.data.shelf.aisle.department.slug}/${data.data.shelf.aisle.slug}`}
-            >
-              {data.data.shelf.aisle.name}
-            </Link>
-            <Link
-              href={`/shop/browse/${data.data.shelf.aisle.department.slug}/${data.data.shelf.aisle.slug}/${data.data.shelf.slug}`}
-            >
-              {data.data.shelf.name}
-            </Link>
-            <Link href="#" className="capitalize">
-              {data.data.name}
-            </Link>
-          </ProductsLayout.Breadcrumbs>
-        </>
-      ) : (
-        <Skeleton h={20} />
-      )}
+      <>
+        <Head>
+          <title>{"Buy " + capitalize(name)}</title>
+        </Head>
+        <ProductsLayout.Breadcrumbs>
+          <Link href={`/shop/browse/${department.slug}`}>
+            {department.name}
+          </Link>
+          <Link href={`/shop/browse/${department.slug}/${aisle.slug}`}>
+            {aisle.name}
+          </Link>
+          <Link
+            href={`/shop/browse/${department.slug}/${aisle.slug}/${shelf.slug}`}
+          >
+            {shelf.name}
+          </Link>
+          <Link href="#" className="capitalize">
+            {name}
+          </Link>
+        </ProductsLayout.Breadcrumbs>
+      </>
 
       <div className="mt-5 grid gap-10 md:grid-cols-2">
         <div>
@@ -87,10 +136,10 @@ export default function Product({ sku }: { sku: string }) {
               mx="auto"
               loop
               withIndicators
-              classNames={{ root: ' border border-gray-400 shadow-lg' }}
+              classNames={{ root: " border border-gray-400 shadow-lg" }}
               styles={{
                 indicator: {
-                  background: '#15aabf',
+                  background: "#15aabf",
                 },
               }}
             >
@@ -114,17 +163,7 @@ export default function Product({ sku }: { sku: string }) {
         </div>
 
         <div className="space-y-5">
-          {data ? (
-            <ProductDetails product={data?.data} />
-          ) : (
-            <>
-              <Skeleton height={40} mb="xl" />
-              <Skeleton height={15} mb="xl" />
-              <Skeleton height={25} mb="xl" />
-              <Skeleton height={100} mb="xl" />
-              <Skeleton height={100} mb="xl" />
-            </>
-          )}
+          <ProductDetails product={product} />
         </div>
       </div>
     </>

@@ -1,22 +1,22 @@
-import { useState } from 'react';
-import dynamic from 'next/dynamic';
+import { useState } from "react";
+import dynamic from "next/dynamic";
 
-import type { AppProps } from 'next/app';
+import type { AppProps } from "next/app";
 
 /*** APP ***/
-import '@/src/styles/main.css';
-import Layout from '@/components/layout';
+import "@/src/styles/main.css";
+import Layout from "@/components/layout";
 //import '@fontsource/mulish';
 
 /*** SUPABASE */
-import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';
-import { SessionContextProvider } from '@supabase/auth-helpers-react';
-import type { Session } from '@supabase/auth-helpers-nextjs';
-import type { Database } from '@/types/supabase';
+import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { SessionContextProvider } from "@supabase/auth-helpers-react";
+import type { Session } from "@supabase/auth-helpers-nextjs";
+import type { Database } from "@/types/supabase";
 
 /*** REACT QUERY ***/
-import { QueryClientProvider } from '@tanstack/react-query';
-import queryClient from '@/src/config/react-query';
+import { QueryClientProvider } from "@tanstack/react-query";
+import queryClient from "@/src/config/react-query";
 
 /*** MANTINE ***/
 import {
@@ -24,15 +24,15 @@ import {
   ColorSchemeProvider,
   type ColorScheme,
   createEmotionCache,
-} from '@mantine/core';
-import { NotificationsProvider } from '@mantine/notifications';
-import { ModalsProvider } from '@mantine/modals';
+} from "@mantine/core";
+import { NotificationsProvider } from "@mantine/notifications";
+import { ModalsProvider } from "@mantine/modals";
 
-import { Mulish } from 'next/font/google';
+import { Mulish } from "next/font/google";
 
 const mulish = Mulish({
-  weight: ['400', '500', '600', '700', '800', '900'],
-  subsets: ['latin'],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  subsets: ["latin"],
 });
 
 export default function App({
@@ -41,15 +41,15 @@ export default function App({
 }: AppProps<{
   initialSession: Session;
 }>) {
-  const Layout = dynamic(() => import('@/components/layout'), { ssr: false });
+  const Layout = dynamic(() => import("@/components/layout"), { ssr: false });
 
   const [supabase] = useState(() => createBrowserSupabaseClient<Database>());
 
   /*** MANTINE ***/
-  const [colorScheme, setColorScheme] = useState<ColorScheme>('light');
+  const [colorScheme, setColorScheme] = useState<ColorScheme>("light");
   const toggleColorScheme = (value?: ColorScheme) =>
-    setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
-  const emotionCache = createEmotionCache({ key: 'mantine', prepend: false });
+    setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
+  const emotionCache = createEmotionCache({ key: "mantine", prepend: false });
 
   return (
     <>
@@ -71,16 +71,16 @@ export default function App({
                   colorScheme,
                   colors: {
                     dark: [
-                      '#E2E8F0',
-                      '#A6A7AB',
-                      '#909296',
-                      '#5c5f66',
-                      '#373A40',
-                      '#2C2E33',
-                      'rgb(31 41 55)',
-                      'rgb(17 24 39)',
-                      '#141517',
-                      '#101113',
+                      "#E2E8F0",
+                      "#A6A7AB",
+                      "#909296",
+                      "#5c5f66",
+                      "#373A40",
+                      "#2C2E33",
+                      "rgb(31 41 55)",
+                      "rgb(17 24 39)",
+                      "#141517",
+                      "#101113",
                     ],
                   },
                   fontFamily: mulish.style.fontFamily,
