@@ -1,18 +1,39 @@
+import type { GetServerSideProps } from 'next';
+
 import { Title } from '@mantine/core';
 
 /*** QUERY ***/
 import { useQueries } from '@tanstack/react-query';
 
 /*** COMPONENTS ***/
-import LoadingSpinner from '@/components/loading-spinner';
 import Carousel from '@/components/product/product-carousel';
-
-import { Skeleton } from '@mantine/core';
 
 // Postgres views to query for
 const views = ['get_specials', 'get_random_picks'];
 
-export default function Home() {
+import { prisma } from '../prisma/client';
+import type { Prisma } from '@prisma/client';
+
+export const getServerSideProps = async () => {
+  const specials = await prisma.get_specials.findMany();
+  const random_picks = await prisma.get_random_picks.findMany();
+
+  return {
+    props: {
+      specials: JSON.parse(JSON.stringify(specials)),
+      random_picks: JSON.parse(JSON.stringify(random_picks)),
+    },
+  };
+};
+
+export default function Home({
+  specials,
+  random_picks,
+}: {
+  // specials: Prisma.productsSelect;
+  specials: any;
+  random_picks: any;
+}) {
   /*** QUERY ***/
   const [specialsData, picksData] = useQueries({
     queries: views.map((view) => {
@@ -31,22 +52,14 @@ export default function Home() {
           Weekly Specials
         </Title>
 
-        {!specialsData?.data?.data ? (
-          <Carousel />
-        ) : (
-          <Carousel products={specialsData?.data?.data} />
-        )}
+        <Carousel products={specials} />
       </div>
       <div className="flex flex-col space-y-3">
         <Title order={2} weight={800} className="text-center">
           Top Picks
         </Title>
 
-        {!picksData?.data?.data ? (
-          <Carousel />
-        ) : (
-          <Carousel products={picksData?.data?.data} />
-        )}
+        <Carousel products={random_picks} />
       </div>
     </div>
   );
