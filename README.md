@@ -1,8 +1,6 @@
-http://grocery.alexnguyen.co.nz
+A full-stack Next.js + Supabase e-commerce project. Initially intended to reproduce main features of [Countdown.co.nz](https://countdown.co.nz) which is an online groceries store (for a locally based supermarket chain).
 
-A full-stack Next.js + Supabase e-commerce project. Initially intended to reproduce main features of [Countdown](https://countdown.co.nz) - an online groceries site.
-
-Doesn't reproduce stock management, logistics, etc. that would actually be involved with this sort of app.
+Doesn't reproduce stock management, logistics, etc. that would actually be involved with this sort of service.
 
 # Main Tools
 
@@ -21,8 +19,3 @@ Doesn't reproduce stock management, logistics, etc. that would actually be invol
 - [Postgres](https://www.postgresql.org/) - database
 - [Stripe](https://stripe.com/) - payments integration
 - [Google Places API](https://developers.google.com/maps/documentation/places/web-service/overview) - address auto-completion
-
-### To Do
-
-- add more products
-- backend based cart session
