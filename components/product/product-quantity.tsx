@@ -1,18 +1,16 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 
-import { Button, NumberInput, Group, NumberInputHandlers } from '@mantine/core';
+import { Button, NumberInput, Group, NumberInputHandlers } from "@mantine/core";
 
-import { useStore } from '@/src/state/store';
+import { useStore } from "@/src/state/store";
 
-import { type Products } from '@/src/utils/supabase';
+import { type products } from "@prisma/client";
 
-export default function Quantity({ product }: { product: Products }) {
+export default function Quantity({ product }: { product: products }) {
   /*** STATE ***/
   const cart = useStore((state) => state.cart);
 
-  const addToCart = useStore((state) => state.addToCart);
-  const addQuantity = useStore((state) => state.addQuantity);
-  const subtractQuantity = useStore((state) => state.subtractQuantity);
+  const { addToCart, addQuantity, subtractQuantity } = useStore();
 
   const [quantity, setQuantity] = useState(0);
   const handlers = useRef<NumberInputHandlers>();
@@ -49,7 +47,7 @@ export default function Quantity({ product }: { product: Products }) {
             min={0}
             step={1}
             styles={{
-              input: { width: 'full', borderRadius: '32px 0px 0px 32px' },
+              input: { width: "full", borderRadius: "32px 0px 0px 32px" },
             }}
           />
           <Button
@@ -65,7 +63,7 @@ export default function Quantity({ product }: { product: Products }) {
             color="dark.5"
             px={14}
             styles={{
-              root: { borderRadius: '0px 32px 32px 0px' },
+              root: { borderRadius: "0px 32px 32px 0px" },
             }}
           >
             +

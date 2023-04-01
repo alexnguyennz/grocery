@@ -1,20 +1,20 @@
-import type { GetServerSideProps } from 'next';
+import type { GetServerSideProps } from "next";
 
-import { Title } from '@mantine/core';
+import { Title } from "@mantine/core";
 
 /*** QUERY ***/
-import { useQueries } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 
 /*** COMPONENTS ***/
-import Carousel from '@/components/product/product-carousel';
+import Carousel from "@/components/product/product-carousel";
 
 // Postgres views to query for
-const views = ['get_specials', 'get_random_picks'];
+const views = ["get_specials", "get_random_picks"];
 
-import { prisma } from '../prisma/client';
-import type { Prisma } from '@prisma/client';
+import { prisma } from "@/prisma/client";
+import type { products } from "@prisma/client";
 
-export const getServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async () => {
   const specials = await prisma.get_specials.findMany();
   const random_picks = await prisma.get_random_picks.findMany();
 
@@ -30,21 +30,9 @@ export default function Home({
   specials,
   random_picks,
 }: {
-  // specials: Prisma.productsSelect;
-  specials: any;
-  random_picks: any;
+  specials: products[];
+  random_picks: products[];
 }) {
-  /*** QUERY ***/
-  const [specialsData, picksData] = useQueries({
-    queries: views.map((view) => {
-      return {
-        queryKey: ['view', view],
-        queryFn: () =>
-          fetch(`/api/view?view=${view}`).then((response) => response.json()),
-      };
-    }),
-  });
-
   return (
     <div className="space-y-10">
       <div className="flex flex-col space-y-3">

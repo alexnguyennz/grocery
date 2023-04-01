@@ -1,22 +1,24 @@
-import { useState } from 'react';
-import Head from 'next/head';
-import NextLink from 'next/link';
+import { useState } from "react";
+import Head from "next/head";
+import NextLink from "next/link";
 
-import type { GetServerSideProps } from 'next';
+import type { GetServerSideProps } from "next";
 
 /*** SUPABASE ***/
-import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import {
   getDepartmentAisles,
   type DepartmentAisles,
-} from '@/src/utils/supabase';
+} from "@/src/utils/supabase";
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 
 /*** COMPONENTS ***/
-import ProductsLayout from '@/components/products/products';
-import ProductFilter from '@/components/product/product-filter';
-import ProductPagination from '@/components/product/product-pagination';
+import ProductsLayout from "@/components/products/products";
+import ProductFilter from "@/components/product/product-filter";
+import ProductPagination from "@/components/product/product-pagination";
+
+import { prisma } from "@/prisma/client";
 
 type PageProps = {
   aisles: DepartmentAisles;
@@ -47,14 +49,14 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 export default function Department({ slug, name, aisles }: PageProps) {
   /*** STATE ***/
-  const [filter, setFilter] = useState('all');
-  const [sort, setSort] = useState('sku');
+  const [filter, setFilter] = useState("all");
+  const [sort, setSort] = useState("sku");
   const [pageSize, setPageSize] = useState(20);
   const [page, setPage] = useState(1);
 
   /*** QUERY ***/
   const { data } = useQuery({
-    queryKey: ['department', slug, page, pageSize, filter, sort],
+    queryKey: ["department", slug, page, pageSize, filter, sort],
     queryFn: async () => {
       return fetch(
         `/api/products?department=${slug}&page=${page}&limit=${pageSize}&filter=${filter}&sort=${sort}`

@@ -1,8 +1,10 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 /*** SUPABASE ***/
-import type { Cart, CartTwo, User, Products } from '@/src/utils/supabase';
+import type { Cart, User } from "@/src/utils/supabase";
+
+import { type products } from "@prisma/client";
 
 type State = {
   //cart: any;
@@ -15,12 +17,12 @@ type Test = {
 };
 
 type Action = {
-  addToCart: (product: Products) => void;
-  removeFromCart: (product: Products) => void;
-  addQuantity: (product: Products) => void;
-  subtractQuantity: (product: Products) => void;
-  clearTrolley: (cart: State['cart']) => void;
-  setAccount: (account: State['account']) => void;
+  addToCart: (product: products) => void;
+  removeFromCart: (product: products) => void;
+  addQuantity: (product: products) => void;
+  subtractQuantity: (product: products) => void;
+  clearTrolley: (cart: State["cart"]) => void;
+  setAccount: (account: State["account"]) => void;
 };
 
 export const useStore = create<State & Action>()(
@@ -100,7 +102,7 @@ export const useStore = create<State & Action>()(
       setAccount: (account) => set(() => ({ account })),
     }),
     {
-      name: 'settings', // storage item name
+      name: "settings", // storage item name
       storage: createJSONStorage(() => localStorage),
     }
   )

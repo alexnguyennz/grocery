@@ -1,18 +1,17 @@
 /*** MANTINE ***/
-import { Skeleton } from '@mantine/core';
-import { Carousel } from '@mantine/carousel';
+import { Skeleton } from "@mantine/core";
+import { Carousel } from "@mantine/carousel";
 
 /*** COMPONENTS ***/
-import ProductCard from '@/components/product/product-card';
+import ProductCard from "@/components/product/product-card";
 
-import { type Products } from '@/src/utils/supabase';
-
-import { Prisma } from '@prisma/client';
+import { type Products } from "@/src/utils/supabase";
+import type { products } from "@prisma/client";
 
 export default function ProductCarousel({
   products,
 }: {
-  products?: Products[];
+  products: products[];
 }) {
   if (!products) {
     return (
@@ -21,17 +20,17 @@ export default function ProductCarousel({
         slideSize="20%"
         slideGap="xl"
         breakpoints={[
-          { maxWidth: 'md', slideSize: '33.3333%' },
-          { maxWidth: 'sm', slideSize: '100%', slideGap: 0 },
+          { maxWidth: "md", slideSize: "33.3333%" },
+          { maxWidth: "sm", slideSize: "100%", slideGap: 0 },
         ]}
         sx={{ flex: 1 }}
         styles={{
           indicator: {
-            background: 'green',
+            background: "green",
             width: 12,
             height: 4,
-            transition: 'width 250ms ease',
-            '&[data-active]': {
+            transition: "width 250ms ease",
+            "&[data-active]": {
               width: 40,
             },
           },
@@ -54,17 +53,17 @@ export default function ProductCarousel({
       slideSize="20%"
       slideGap="xl"
       breakpoints={[
-        { maxWidth: 'md', slideSize: '33.3333%' },
-        { maxWidth: 'sm', slideSize: '100%', slideGap: 0 },
+        { maxWidth: "md", slideSize: "33.3333%" },
+        { maxWidth: "sm", slideSize: "100%", slideGap: 0 },
       ]}
       sx={{ flex: 1 }}
       styles={{
         indicator: {
-          background: 'green',
+          background: "green",
           width: 12,
           height: 4,
-          transition: 'width 250ms ease',
-          '&[data-active]': {
+          transition: "width 250ms ease",
+          "&[data-active]": {
             width: 40,
           },
         },
@@ -74,7 +73,7 @@ export default function ProductCarousel({
     >
       {products.map((product, idx) => (
         <Carousel.Slide key={product.id}>
-          <ProductCard product={product} priority={idx === 0 ? true : false} />{' '}
+          <ProductCard product={product} priority={idx === 0} />{" "}
           {/* set the first image to have priority */}
         </Carousel.Slide>
       ))}
