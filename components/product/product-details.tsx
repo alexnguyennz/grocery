@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 
 /*** MANTINE ***/
 import {
@@ -11,16 +11,16 @@ import {
   NumberInput,
   Group,
   NumberInputHandlers,
-} from '@mantine/core';
+} from "@mantine/core";
 
-import { useStore } from '@/src/state/store';
+import { useStore } from "@/src/state/store";
 
 /*** UTILS ***/
-import capitalize from '@/src/utils/capitalize';
-import parse from 'html-react-parser';
+import capitalize from "@/src/utils/capitalize";
+import parse from "html-react-parser";
 
 /*** SUPABASE ***/
-import { type ProductDetails, type Cart } from '@/src/utils/supabase';
+import { type ProductDetails, type Cart } from "@/src/utils/supabase";
 
 type NutritionRow = {
   columns: string[];
@@ -74,9 +74,9 @@ export default function ProductDetails({ product }: ProductDetails) {
       </Text>
 
       <div className="grid grid-cols-2">
-        <Title color={`${price.isSpecial && 'red'}`} order={2}>
-          ${price.salePrice.toFixed(2)}{' '}
-          {unit === 'Kg' && (
+        <Title color={`${price.isSpecial && "red"}`} order={2}>
+          ${price.salePrice.toFixed(2)}{" "}
+          {unit === "Kg" && (
             <span className="text-lg">{unit.toLowerCase()}</span>
           )}
         </Title>
@@ -106,7 +106,7 @@ export default function ProductDetails({ product }: ProductDetails) {
               min={0}
               step={1}
               styles={{
-                input: { width: 100, borderRadius: '32px 0px 0px 32px' },
+                input: { width: 100, borderRadius: "32px 0px 0px 32px" },
               }}
             />
             <Button
@@ -124,7 +124,7 @@ export default function ProductDetails({ product }: ProductDetails) {
               px={20}
               size="lg"
               styles={{
-                root: { borderRadius: '0px 32px 32px 0px' },
+                root: { borderRadius: "0px 32px 32px 0px" },
               }}
             >
               +
@@ -139,7 +139,7 @@ export default function ProductDetails({ product }: ProductDetails) {
         <Accordion
           sx={(theme) => ({
             backgroundColor:
-              theme.colorScheme === 'dark' ? theme.colors.dark[7] : '#ffffff',
+              theme.colorScheme === "dark" ? theme.colors.dark[7] : "#ffffff",
           })}
         >
           {origins && (
@@ -151,24 +151,22 @@ export default function ProductDetails({ product }: ProductDetails) {
               </Accordion.Control>
               <Accordion.Panel>
                 {origins[0] ===
-                  'Made in New Zealand from local and imported ingredients.' ||
-                'Made in New Zealand from imported and local ingredients.'
-                  ? 'Product of New Zealand'
+                  "Made in New Zealand from local and imported ingredients." ||
+                "Made in New Zealand from imported and local ingredients."
+                  ? "Product of New Zealand"
                   : origins[0]}
               </Accordion.Panel>
             </Accordion.Item>
           )}
 
-          {ingredients && (
+          {!!ingredients?.ingredients.length && (
             <Accordion.Item value="ingredients">
               <Accordion.Control>Ingredients</Accordion.Control>
-              <Accordion.Panel>
-                {ingredients.ingredients && ingredients.ingredients[0]}
-              </Accordion.Panel>
+              <Accordion.Panel>{ingredients.ingredients[0]}</Accordion.Panel>
             </Accordion.Item>
           )}
 
-          {nutrition && (
+          {!!nutrition.length && (
             <Accordion.Item value="nutrition">
               <Accordion.Control>Nutrition</Accordion.Control>
               <Accordion.Panel>
@@ -186,7 +184,7 @@ export default function ProductDetails({ product }: ProductDetails) {
 
                   <thead>
                     <tr>
-                      {nutrition[0].columnHeaders.map(
+                      {nutrition[0].columnHeaders?.map(
                         (column: NutritionHeaderColumn) => (
                           <th key={column.name}>{column.name}</th>
                         )

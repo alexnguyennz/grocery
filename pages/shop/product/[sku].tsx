@@ -59,10 +59,19 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     },
   });
 
+  const images = await prisma.objects.findMany({
+    where: {
+      name: {
+        startsWith: sku as string,
+      },
+    },
+  });
+
   return {
     props: {
       sku,
       product: JSON.parse(JSON.stringify(data)),
+      images: JSON.parse(JSON.stringify(images)),
     },
   };
 };
@@ -70,9 +79,11 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 export default function Product({
   sku,
   product,
+  images,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  /*** QUERIES ***/
   console.log("product", product);
+
+  /*** QUERIES ***/
 
   const { name, shelf_products_shelfToshelf: shelf } = product;
   const { aisle_shelf_aisleToaisle: aisle } = shelf;
@@ -91,7 +102,7 @@ export default function Product({
 
   //console.log("react query", data);
 
-  const images = useQuery({
+  /* const images = useQuery({
     queryKey: ["productImages", sku],
     queryFn: async () => {
       return fetch(`/api/product-images?sku=${sku}`).then((response) =>
@@ -99,67 +110,56 @@ export default function Product({
       );
     },
     keepPreviousData: true,
-  });
-
-  /*shelf_products_shelfToshelf: {
-        aisle_shelf_aisleToaisle: {
-            department_aisle_departmentTodepartment: { */
+  }); */
 
   return (
     <>
-      <>
-        <Head>
-          <title>{"Buy " + capitalize(name)}</title>
-        </Head>
-        <ProductsLayout.Breadcrumbs>
-          <Link href={`/shop/browse/${department.slug}`}>
-            {department.name}
-          </Link>
-          <Link href={`/shop/browse/${department.slug}/${aisle.slug}`}>
-            {aisle.name}
-          </Link>
-          <Link
-            href={`/shop/browse/${department.slug}/${aisle.slug}/${shelf.slug}`}
-          >
-            {shelf.name}
-          </Link>
-          <Link href="#" className="capitalize">
-            {name}
-          </Link>
-        </ProductsLayout.Breadcrumbs>
-      </>
+      <Head>
+        <title>{"Buy " + capitalize(name)}</title>
+      </Head>
+      <ProductsLayout.Breadcrumbs>
+        <Link href={`/shop/browse/${department.slug}`}>{department.name}</Link>
+        <Link href={`/shop/browse/${department.slug}/${aisle.slug}`}>
+          {aisle.name}
+        </Link>
+        <Link
+          href={`/shop/browse/${department.slug}/${aisle.slug}/${shelf.slug}`}
+        >
+          {shelf.name}
+        </Link>
+        <Link href="#" className="capitalize">
+          {name}
+        </Link>
+      </ProductsLayout.Breadcrumbs>
 
       <div className="mt-5 grid gap-10 md:grid-cols-2">
         <div>
-          {images && images?.data ? (
-            <Carousel
-              mx="auto"
-              loop
-              withIndicators
-              classNames={{ root: " border border-gray-400 shadow-lg" }}
-              styles={{
-                indicator: {
-                  background: "#15aabf",
-                },
-              }}
-            >
-              {images.data.data.map((image: { name: string }) => (
-                <Carousel.Slide key={image.name}>
-                  <div className="mx-auto w-full bg-white">
-                    <Image
-                      src={`${process.env.NEXT_PUBLIC_SUPABASE_BUCKET}${sku}/${image.name}`}
-                      width={500}
-                      height={500}
-                      alt={image.name}
-                      className="mx-auto py-10"
-                    />
-                  </div>
-                </Carousel.Slide>
-              ))}
-            </Carousel>
-          ) : (
-            <Skeleton h={500} />
-          )}
+          <Carousel
+            mx="auto"
+            loop
+            withIndicators
+            classNames={{ root: " border border-gray-400 shadow-lg" }}
+            styles={{
+              indicator: {
+                background: "#15aabf",
+              },
+            }}
+          >
+            {images.map((image: { name: string }) => (
+              <Carousel.Slide key={image.name}>
+                <div className="mx-auto w-full bg-white">
+                  <Image
+                    src={`${process.env.NEXT_PUBLIC_SUPABASE_BUCKET}/${image.name}`}
+                    width={500}
+                    height={500}
+                    alt={image.name}
+                    className="mx-auto py-10"
+                  />
+                </div>
+              </Carousel.Slide>
+            ))}
+          </Carousel>
+          )
         </div>
 
         <div className="space-y-5">

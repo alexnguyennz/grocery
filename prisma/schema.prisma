@@ -6,7 +6,7 @@ generator client {
 datasource supabase {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["auth", "public"]
+  schemas  = ["auth", "public", "storage"]
 }
 
 model audit_log_entries {
@@ -223,6 +223,8 @@ model auth_users {
   mfa_factors                 mfa_factors[]
   sessions                    sessions[]
   users                       public_users?
+  buckets                     buckets[]
+  objects                     objects[]
 
   @@index([instance_id])
   @@map("users")
@@ -365,10 +367,53 @@ model public_users {
   @@schema("public")
 }
 
+model buckets {
+  id                 String      @id
+  name               String      @unique(map: "bname")
+  owner              String?     @supabase.Uuid
+  created_at         DateTime?   @default(now()) @supabase.Timestamptz(6)
+  updated_at         DateTime?   @default(now()) @supabase.Timestamptz(6)
+  public             Boolean?    @default(false)
+  avif_autodetection Boolean?    @default(false)
+  file_size_limit    BigInt?
+  allowed_mime_types String[]
+  users              auth_users? @relation(fields: [owner], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  objects            objects[]
+
+  @@schema("storage")
+}
+
+model migrations {
+  id          Int       @id
+  name        String    @unique @supabase.VarChar(100)
+  hash        String    @supabase.VarChar(40)
+  executed_at DateTime? @default(now()) @supabase.Timestamp(6)
+
+  @@schema("storage")
+}
+
+model objects {
+  id               String      @id @default(dbgenerated("uuid_generate_v4()")) @supabase.Uuid
+  bucket_id        String?
+  name             String?
+  owner            String?     @supabase.Uuid
+  created_at       DateTime?   @default(now()) @supabase.Timestamptz(6)
+  updated_at       DateTime?   @default(now()) @supabase.Timestamptz(6)
+  last_accessed_at DateTime?   @default(now()) @supabase.Timestamptz(6)
+  metadata         Json?
+  path_tokens      String[]    @default(dbgenerated("string_to_array(name, '/'::text)"))
+  buckets          buckets?    @relation(fields: [bucket_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "objects_bucketId_fkey")
+  users            auth_users? @relation(fields: [owner], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([bucket_id, name], map: "bucketid_objname")
+  @@index([name], map: "name_prefix_search")
+  @@schema("storage")
+}
+
 view get_specials {
   id                                Int?
   created_at                        DateTime? @supabase.Timestamptz(6)
-  sku                               Int @unique
+  sku                               Int       @unique
   name                              String?
   brand                             String?
   generic_name                      String?
@@ -407,7 +452,7 @@ view get_specials {
 view get_random_picks {
   id                                Int?
   created_at                        DateTime? @supabase.Timestamptz(6)
-  sku                               Int @unique
+  sku                               Int       @unique
   name                              String?
   brand                             String?
   generic_name                      String?
