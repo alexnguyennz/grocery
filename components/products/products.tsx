@@ -1,5 +1,5 @@
-import { useState, type ReactNode } from 'react';
-import NextLink from 'next/link';
+import { useState, type ReactNode } from "react";
+import NextLink from "next/link";
 import {
   Breadcrumbs as MantineBreadcrumbs,
   Collapse,
@@ -9,15 +9,15 @@ import {
   Skeleton,
   Text,
   Title,
-} from '@mantine/core';
-import { IconChevronDown, IconChevronUp, IconHome2 } from '@tabler/icons-react';
+} from "@mantine/core";
+import { IconChevronDown, IconChevronUp, IconHome2 } from "@tabler/icons-react";
 
-import { UseQueryOptions } from '@tanstack/react-query';
+import { UseQueryOptions } from "@tanstack/react-query";
 
 /*** COMPONENTS ***/
-import ProductCard from '@/components/product/product-card';
+import ProductCard from "@/components/product/product-card";
 
-import { type Products } from '@/src/utils/supabase';
+import type { products } from "@prisma/client";
 
 type Children = {
   children: ReactNode;
@@ -31,7 +31,7 @@ const ProductsLayout = ({ children }: Children) => <>{children}</>;
 
 const Breadcrumbs = ({ children }: Children) => (
   <div className="hidden md:block">
-    <MantineBreadcrumbs separator="→" className="flex flex-wrap breadcrumbs">
+    <MantineBreadcrumbs separator="→" className="breadcrumbs flex flex-wrap">
       <NextLink href="/">
         <IconHome2 />
       </NextLink>
@@ -65,17 +65,17 @@ const Heading = ({
 );
 
 const Body = ({ children }: Children) => {
-  return <div className="flex flex-col md:flex-row gap-5">{children}</div>;
+  return <div className="flex flex-col gap-5 md:flex-row">{children}</div>;
 };
 
 const Categories = ({ children }: Children) => {
   const [categoriesOpened, setCategoriesOpened] = useState(true);
 
   return (
-    <div className="space-y-2 basis-1/6">
+    <div className="basis-1/6 space-y-2">
       <UnstyledButton
         onClick={() => setCategoriesOpened((o) => !o)}
-        className="w-full block"
+        className="block w-full"
       >
         <Group spacing={5} position="apart">
           <Text size="sm">Categories</Text>
@@ -88,21 +88,21 @@ const Categories = ({ children }: Children) => {
       </UnstyledButton>
       <Divider size="md" />
       <Collapse in={categoriesOpened} animateOpacity={false}>
-        <ul className="text-lg space-y-2">{children}</ul>
+        <ul className="space-y-2 text-lg">{children}</ul>
       </Collapse>
     </div>
   );
 };
 
 const Main = ({ children }: Children) => {
-  return <div className="space-y-3 basis-5/6">{children}</div>;
+  return <div className="basis-5/6 space-y-3">{children}</div>;
 };
 
 const Cards = ({ data }: { data: CardData }) => {
   return (
-    <div className="w-full grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+    <div className="grid w-full gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
       {data && data.data
-        ? data.data.map((product: Products) => (
+        ? data.data.map((product: products) => (
             <ProductCard product={product} key={product.id} />
           ))
         : [0, 1, 2, 3, 4].map((number, idx) => (

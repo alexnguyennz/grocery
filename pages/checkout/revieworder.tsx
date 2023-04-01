@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import Head from 'next/head';
-import NextLink from 'next/link';
-import Image from 'next/image';
-import { useRouter } from 'next/router';
+import { useEffect, useState } from "react";
+import Head from "next/head";
+import NextLink from "next/link";
+import Image from "next/image";
+import { useRouter } from "next/router";
 
-import type { GetServerSideProps } from 'next';
+import type { GetServerSideProps } from "next";
 
 import {
   Button,
@@ -15,32 +15,32 @@ import {
   Text,
   Title,
   Paper,
-} from '@mantine/core';
+} from "@mantine/core";
 
-import { useStore } from '@/src/state/store';
+import { useStore } from "@/src/state/store";
 
 /*** COMPONENTS ***/
-import Quantity from '@/components/product/product-quantity';
+import Quantity from "@/components/product/product-quantity";
 
 /*** SUPABASE ***/
 import {
   createServerSupabaseClient,
   type SupabaseClient,
-} from '@supabase/auth-helpers-nextjs';
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+} from "@supabase/auth-helpers-nextjs";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import {
   getSelectedAddress,
   getUserAddresses,
   type Cart,
-} from '@/src/utils/supabase';
+} from "@/src/utils/supabase";
 
 /*** UTILS ***/
-import capitalize from '@/src/utils/capitalize';
+import capitalize from "@/src/utils/capitalize";
 
 type SelectedAddressResponse = Awaited<ReturnType<typeof getSelectedAddress>>;
-type SelectedAddressResponseSuccess = SelectedAddressResponse['data'];
+type SelectedAddressResponseSuccess = SelectedAddressResponse["data"];
 type UserAddressesResponse = Awaited<ReturnType<typeof getUserAddresses>>;
-type UserAddressesResponseSuccess = UserAddressesResponse['data'];
+type UserAddressesResponseSuccess = UserAddressesResponse["data"];
 
 type PageProps = {
   user: SelectedAddressResponseSuccess;
@@ -88,7 +88,7 @@ export default function ReviewOrder({ user, user_addresses }: PageProps) {
     setCartTotal(cart.length);
   }, [cart]);
 
-  const [list, setList] = useState('');
+  const [list, setList] = useState("");
 
   const [listSuccess, setListSuccess] = useState(false);
 
@@ -120,10 +120,10 @@ export default function ReviewOrder({ user, user_addresses }: PageProps) {
 
   async function changeAddress(user_address_id: number) {
     const { data } = await supabase
-      .from('users')
+      .from("users")
       .update({ selected_user_address: user_address_id })
-      .eq('id', user.id)
-      .select('*, selected_user_address (*)')
+      .eq("id", user.id)
+      .select("*, selected_user_address (*)")
       .single();
 
     setSelectedAddress(data?.selected_user_address);
@@ -138,7 +138,7 @@ export default function ReviewOrder({ user, user_addresses }: PageProps) {
       </Head>
       {/* Trolley */}
       <Paper shadow="xs" p="md">
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <Title order={1}>Cart</Title>
             <p className="text-xl">{cartTotal} items</p>
@@ -153,12 +153,12 @@ export default function ReviewOrder({ user, user_addresses }: PageProps) {
         </div>
         {/* products start*/}
         <div className="space-y-5">
-          {cart.map((product: Cart) => (
+          {cart.map((product: any) => (
             <div
               key={product.sku}
-              className="flex space-x-10 items-center justify-between"
+              className="flex items-center justify-between space-x-10"
             >
-              <div className="flex space-x-10 items-center">
+              <div className="flex items-center space-x-10">
                 <Image
                   src={`${process.env.NEXT_PUBLIC_SUPABASE_BUCKET}${product.sku}/${product.sku}.jpg`}
                   alt={product.name!}
@@ -181,7 +181,7 @@ export default function ReviewOrder({ user, user_addresses }: PageProps) {
                   </Text>
                 </div>
               </div>
-              <div className="flex space-x-10 items-center">
+              <div className="flex items-center space-x-10">
                 <Quantity product={product} />
                 <Text className="font-semibold">
                   $
@@ -194,7 +194,7 @@ export default function ReviewOrder({ user, user_addresses }: PageProps) {
       </Paper>
       {/* Totals */}
       <Paper shadow="xs" p="md">
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <div className="space-y-3">
             <Text>Deliver to:</Text>
 
@@ -203,10 +203,10 @@ export default function ReviewOrder({ user, user_addresses }: PageProps) {
               <br />
               {selectedAddress.address_line2}
               <br />
-              {selectedAddress.city + ' ' + selectedAddress.post_code}
+              {selectedAddress.city + " " + selectedAddress.post_code}
             </Text>
 
-            <Text className="font-semibold space-x-3">
+            <Text className="space-x-3 font-semibold">
               <span className="font-normal">
                 <Button
                   onClick={() => setAddressOpened(true)}
@@ -240,7 +240,7 @@ export default function ReviewOrder({ user, user_addresses }: PageProps) {
       <Paper shadow="xs" p="md">
         <div className="flex justify-between">
           <div className="space-x-3">
-            <Button onClick={() => push('/')} color="cyan.6" variant="outline">
+            <Button onClick={() => push("/")} color="cyan.6" variant="outline">
               Continue shopping
             </Button>
             <Button onClick={() => setClearCartOpened(true)} color="red">
@@ -251,10 +251,10 @@ export default function ReviewOrder({ user, user_addresses }: PageProps) {
           <Button
             onClick={
               cartTotal > 0
-                ? () => push('/checkout/payment')
+                ? () => push("/checkout/payment")
                 : () => setEmptyCartOpened(true)
             }
-            color={'cyan.6'}
+            color={"cyan.6"}
           >
             Payment
           </Button>
@@ -271,7 +271,7 @@ export default function ReviewOrder({ user, user_addresses }: PageProps) {
             {user_addresses &&
               user_addresses.map((address) => (
                 <div
-                  className="flex justify-between items-center"
+                  className="flex items-center justify-between"
                   key={address.id}
                 >
                   <Text>
@@ -279,7 +279,7 @@ export default function ReviewOrder({ user, user_addresses }: PageProps) {
                     <br />
                     {address.address_line2}
                     <br />
-                    {address.city + ' ' + address.post_code}
+                    {address.city + " " + address.post_code}
                   </Text>
 
                   <Button
@@ -306,7 +306,7 @@ export default function ReviewOrder({ user, user_addresses }: PageProps) {
             <Button onClick={clear} color="cyan.6">
               Yes, clear cart
             </Button>
-            <Button onClick={() => setClearCartOpened(false)} color={'red.8'}>
+            <Button onClick={() => setClearCartOpened(false)} color={"red.8"}>
               Cancel
             </Button>
           </Group>
@@ -319,7 +319,7 @@ export default function ReviewOrder({ user, user_addresses }: PageProps) {
         centered
       >
         <Stack>
-          <Button onClick={() => setEmptyCartOpened(false)} color={'green.8'}>
+          <Button onClick={() => setEmptyCartOpened(false)} color={"green.8"}>
             Continue
           </Button>
         </Stack>
