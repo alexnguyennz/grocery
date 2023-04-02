@@ -29,30 +29,32 @@ type PageProps = {
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { department: departmentSlug } = ctx.query;
 
-  const supabase = createServerSupabaseClient(ctx);
-
-  // get all aisles for this department as well as product count for each aisle
-  const { data: aisles } = await getDepartmentAisles(supabase, departmentSlug);
-
-  const {
-    department: { name },
-  } = aisles?.[0];
+  // get all aisles for this department and the product count for each of these aisles
+  const aisles =
+    await prisma.$queryRaw`SELECT a.id, a.name, a.slug, a.value, b.name AS department, COUNT(*)::int 
+    FROM aisle a 
+    INNER JOIN department b ON a.department = b.id 
+    INNER JOIN products ON products.aisle = a.value
+    WHERE b.slug = ${departmentSlug} 
+    GROUP BY a.id, b.name 
+    ORDER BY count DESC`;
 
   return {
     props: {
       aisles,
-      name,
       slug: departmentSlug,
     },
   };
 };
 
-export default function Department({ slug, name, aisles }: PageProps) {
+export default function Department({ aisles, slug }: PageProps) {
   /*** STATE ***/
   const [filter, setFilter] = useState("all");
   const [sort, setSort] = useState("sku");
   const [pageSize, setPageSize] = useState(20);
   const [page, setPage] = useState(1);
+
+  const departmentName = aisles![0].department;
 
   /*** QUERY ***/
   const { data } = useQuery({
@@ -68,21 +70,21 @@ export default function Department({ slug, name, aisles }: PageProps) {
   return (
     <>
       <Head>
-        <title>{name}</title>
+        <title>{departmentName} - Grocery</title>
       </Head>
 
       <ProductsLayout.Breadcrumbs>
-        <NextLink href={slug}>{name}</NextLink>
+        <NextLink href={slug}>{departmentName}</NextLink>
       </ProductsLayout.Breadcrumbs>
 
-      <ProductsLayout.Heading title={name} data={data} />
+      <ProductsLayout.Heading title={departmentName} data={data} />
 
       <ProductsLayout.Body>
         <ProductsLayout.Categories>
           {aisles!.map((aisle) => (
             <li key={aisle.name}>
               <NextLink href={`${slug}/${aisle.slug}`}>
-                {aisle.name} ({aisle.products[0].count})
+                {aisle.name} ({aisle.count})
               </NextLink>
             </li>
           ))}
