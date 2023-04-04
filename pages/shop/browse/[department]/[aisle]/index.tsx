@@ -25,6 +25,7 @@ type PageProps = {
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { aisle: aisleSlug, department: departmentSlug } = ctx.query;
 
+  // get all shelves for this aisle and the product count for each of these shelves
   const shelves = await prisma.$queryRaw`SELECT a.id, a.name, a.slug, a.value, 
     b.name AS aisle_name, b.slug AS aisle_slug, 
     c.name AS department_name, c.slug AS department_slug,
