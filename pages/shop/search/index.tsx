@@ -1,21 +1,21 @@
-import { useEffect, useState } from 'react';
-import Head from 'next/head';
-import Link from 'next/link';
+import { useEffect, useState } from "react";
+import Head from "next/head";
+import Link from "next/link";
 
-import type { GetServerSideProps } from 'next';
+import type { GetServerSideProps } from "next";
 
 /*** QUERY ***/
-import { type Products, type Department } from '@/src/utils/supabase';
+import { type Products, type Department } from "@/src/utils/supabase";
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 
 /*** COMPONENTS ***/
-import ProductsLayout from '@/components/products/products';
-import ProductFilter from '@/components/product/product-filter';
-import ProductPagination from '@/components/product/product-pagination';
+import ProductsLayout from "@/components/products/products";
+import ProductFilter from "@/components/product/product-filter";
+import ProductPagination from "@/components/product/product-pagination";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { q, department = '', aisle = '', shelf = '' } = ctx.query;
+  const { q, department = "", aisle = "", shelf = "" } = ctx.query;
 
   return {
     props: {
@@ -46,15 +46,15 @@ export default function MainCategory({
   shelf,
 }: PageProps) {
   /*** STATE ***/
-  const [filter, setFilter] = useState('all');
-  const [sort, setSort] = useState('sku');
+  const [filter, setFilter] = useState("all");
+  const [sort, setSort] = useState("sku");
   const [pageSize, setPageSize] = useState(20);
   const [page, setPage] = useState(1);
 
   /*** QUERY ***/
   const { data } = useQuery({
     queryKey: [
-      'search',
+      "search",
       q,
       department,
       aisle,
@@ -71,10 +71,6 @@ export default function MainCategory({
     },
     keepPreviousData: true,
   });
-
-  useEffect(() => {
-    console.log('data', data);
-  }, [data]);
 
   return (
     <>
