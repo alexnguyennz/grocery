@@ -2,14 +2,7 @@ import { useState } from "react";
 import Head from "next/head";
 import NextLink from "next/link";
 
-import type { GetServerSideProps } from "next";
-
-/*** SUPABASE ***/
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import {
-  getDepartmentAisles,
-  type DepartmentAisles,
-} from "@/src/utils/supabase";
+import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
 import { useQuery } from "@tanstack/react-query";
 
@@ -19,12 +12,11 @@ import ProductFilter from "@/components/product/product-filter";
 import ProductPagination from "@/components/product/product-pagination";
 
 import { prisma } from "@/prisma/client";
+import { type aisle } from "@prisma/client";
 
-type PageProps = {
-  aisles: DepartmentAisles;
-  slug: string;
-  name: string;
-};
+interface Aisle extends aisle {
+  count: string;
+}
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { department: departmentSlug } = ctx.query;
@@ -47,7 +39,10 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   };
 };
 
-export default function Department({ aisles, slug }: PageProps) {
+export default function Department({
+  aisles,
+  slug,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   /*** STATE ***/
   const [filter, setFilter] = useState("all");
   const [sort, setSort] = useState("sku");
@@ -81,7 +76,7 @@ export default function Department({ aisles, slug }: PageProps) {
 
       <ProductsLayout.Body>
         <ProductsLayout.Categories>
-          {aisles!.map((aisle) => (
+          {aisles.map((aisle: Aisle) => (
             <li key={aisle.name}>
               <NextLink href={`${slug}/${aisle.slug}`}>
                 {aisle.name} ({aisle.count})

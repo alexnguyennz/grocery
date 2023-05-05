@@ -1,34 +1,61 @@
-import '@testing-library/jest-dom';
-import { render, screen } from '@testing-library/react';
-import { useState as useStateMock } from 'react';
-import Footer from '../components/footer';
+import "@testing-library/jest-dom";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
-import { ColorSchemeProvider, type ColorScheme } from '@mantine/core';
+import { useState } from "react";
+import Footer from "@/components/footer";
 
-jest.mock('react', () => ({
-  ...jest.requireActual('react'),
-  useState: jest.fn(),
-}));
-const setState = jest.fn();
+import {
+  ColorSchemeProvider,
+  type ColorScheme,
+  MantineProvider,
+} from "@mantine/core";
 
-describe('Footer', () => {
-  // const [colorScheme, setColorScheme] = useStateMock<ColorScheme>('light');
+const Providers = ({ children }: { children: JSX.Element }) => {
+  const [colorScheme, setColorScheme] = useState<ColorScheme>("light");
+  const toggleColorScheme = (value?: ColorScheme) =>
+    setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
 
-  it('renders a heading', () => {
+  return (
+    <ColorSchemeProvider
+      colorScheme={colorScheme}
+      toggleColorScheme={toggleColorScheme}
+    >
+      <MantineProvider>{children}</MantineProvider>
+    </ColorSchemeProvider>
+  );
+};
+
+describe("Footer", () => {
+  it("renders footer", () => {
     render(
-      <ColorSchemeProvider colorScheme={'light'} toggleColorScheme={null}>
+      <Providers>
         <Footer />
-      </ColorSchemeProvider>
+      </Providers>
     );
 
-    const heading = screen.getByRole('heading', {
-      name: /weekly specials/i,
-    });
-
-    beforeEach(() => {
-      useStateMock.mockImplementation((init: any) => [init, setState]);
+    const heading = screen.getByRole("heading", {
+      name: /grocery/i,
     });
 
     expect(heading).toBeInTheDocument();
+  });
+
+  it("changes colour mode", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <Providers>
+        <Footer />
+      </Providers>
+    );
+
+    const toggle = screen.getByRole("checkbox", {
+      name: /toggle colour mode/i,
+    });
+
+    await user.click(toggle);
+
+    expect(toggle).toBeChecked();
   });
 });

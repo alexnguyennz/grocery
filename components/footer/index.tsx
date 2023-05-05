@@ -1,14 +1,14 @@
-import NextLink from 'next/link';
+import NextLink from "next/link";
 
 import {
   Paper,
   Switch,
   useMantineTheme,
   useMantineColorScheme,
-} from '@mantine/core';
-import { IconSun, IconMoonStars } from '@tabler/icons-react';
+} from "@mantine/core";
+import { IconSun, IconMoonStars } from "@tabler/icons-react";
 
-import departments from '@/src/data/departments.json';
+import departments from "@/src/data/departments.json";
 
 export default function Footer() {
   const theme = useMantineTheme();
@@ -113,7 +113,7 @@ export default function Footer() {
 
           <Switch
             color="cyan.6"
-            checked={colorScheme === 'dark'}
+            checked={colorScheme === "dark"}
             onChange={() => toggleColorScheme()}
             size="lg"
             onLabel={<IconSun color={theme.white} size={20} stroke={1.5} />}
@@ -124,7 +124,7 @@ export default function Footer() {
                 stroke={1.5}
               />
             }
-            aria-label="Toggle light/dark mode"
+            aria-label="Toggle colour mode"
           />
         </div>
       </div>
