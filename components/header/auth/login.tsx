@@ -1,10 +1,10 @@
-import { Group, Text, UnstyledButton } from '@mantine/core';
-import { IconChevronDown, IconLogout, IconSettings } from '@tabler/icons-react';
+import { Group, Text, UnstyledButton } from "@mantine/core";
+import { IconChevronDown } from "@tabler/icons-react";
 
-import { openModal } from '@mantine/modals';
+import { openModal } from "@mantine/modals";
 
 /*** COMPONENTS ***/
-import LoginModal from '@/components/modals/login';
+import LoginModal from "@/components/modals/login";
 
 export default function Login() {
   return (
@@ -20,19 +20,20 @@ export default function Login() {
         });
       }}
       sx={(theme) => ({
-        display: 'block',
-        width: '100%',
+        display: "block",
+        width: "100%",
         padding: theme.spacing.sm,
         color:
-          theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
+          theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
 
-        '&:hover': {
+        "&:hover": {
           backgroundColor:
-            theme.colorScheme === 'dark'
+            theme.colorScheme === "dark"
               ? theme.colors.dark[8]
               : theme.colors.gray[0],
         },
       })}
+      aria-label={"Sign in"}
     >
       <Group spacing={3}>
         <Text>Sign in</Text>

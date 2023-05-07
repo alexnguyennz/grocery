@@ -2,14 +2,7 @@ import type { GetServerSideProps } from "next";
 
 import { Title } from "@mantine/core";
 
-/*** QUERY ***/
-import { useQuery } from "@tanstack/react-query";
-
-/*** COMPONENTS ***/
 import Carousel from "@/components/product/product-carousel";
-
-// Postgres views to query for
-const views = ["get_specials", "get_random_picks"];
 
 import { prisma } from "@/prisma/client";
 import type { products } from "@prisma/client";

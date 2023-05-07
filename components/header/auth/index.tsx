@@ -1,8 +1,7 @@
-/*** STATE ***/
-import { useStore } from '@/src/state/store';
+import { useStore } from "@/src/state/store";
 
-import Account from './account';
-import Login from './/login';
+import Account from "./account";
+import Login from "./login";
 
 export default function Auth() {
   /*** STATE ***/
