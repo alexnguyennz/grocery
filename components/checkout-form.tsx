@@ -1,22 +1,19 @@
-import { useEffect, type FormEventHandler } from 'react';
-import type { GetServerSideProps } from 'next';
+import { type FormEventHandler } from "react";
 
-import { useRouter } from 'next/router';
-
-import { Button, Paper, Stack } from '@mantine/core';
-import { showNotification } from '@mantine/notifications';
-import { IconCheck, IconX } from '@tabler/icons-react';
+import { Button, Paper, Stack } from "@mantine/core";
+import { showNotification } from "@mantine/notifications";
+import { IconCheck, IconX } from "@tabler/icons-react";
 
 import {
   PaymentElement,
   useStripe,
   useElements,
-} from '@stripe/react-stripe-js';
+} from "@stripe/react-stripe-js";
 
 /*** UTILS ***/
-import { POST } from '@/src/utils/fetch';
+import { POST } from "@/src/utils/fetch";
 
-import { type Cart, type User } from '@/src/utils/supabase';
+import { type Cart, type User } from "@/src/utils/supabase";
 
 // testing
 const CheckoutForm = ({ cart, user }: { cart: Cart[]; user: User }) => {
@@ -29,11 +26,11 @@ const CheckoutForm = ({ cart, user }: { cart: Cart[]; user: User }) => {
 
     if (!stripe || !elements) return; // disable form submission until Stripe.js has loaded
 
-    const data = await POST('/api/checkout', { cart, user }); // create the pending order and any order items
+    const data = await POST("/api/checkout", { cart, user }); // create the pending order and any order items
 
     showNotification({
-      message: 'Creating order',
-      color: 'green',
+      message: "Creating order",
+      color: "green",
       icon: <IconCheck />,
     });
 
@@ -45,11 +42,10 @@ const CheckoutForm = ({ cart, user }: { cart: Cart[]; user: User }) => {
     });
 
     if (error) {
-      console.log(error);
       showNotification({
-        title: 'Error processing payment',
+        title: "Error processing payment",
         message: error.message,
-        color: 'red',
+        color: "red",
         icon: <IconX />,
       });
     }
@@ -59,7 +55,7 @@ const CheckoutForm = ({ cart, user }: { cart: Cart[]; user: User }) => {
     <>
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col md:flex-row justify-between gap-5"
+        className="flex flex-col justify-between gap-5 md:flex-row"
       >
         <div className="space-y-5">
           <Paper shadow="xs" p="md">
