@@ -1,24 +1,24 @@
-import { useState, type FormEventHandler } from 'react';
+import { useState, type FormEventHandler } from "react";
 import {
   Anchor,
   Button,
   Group,
   Stack,
-  Stepper,
   Text,
   TextInput,
   PasswordInput,
-} from '@mantine/core';
-import { openModal, closeAllModals } from '@mantine/modals';
-import { IconAt, IconLock } from '@tabler/icons-react';
+} from "@mantine/core";
+import { openModal, closeAllModals } from "@mantine/modals";
+import { showNotification } from "@mantine/notifications";
+import { IconAt, IconLock, IconX } from "@tabler/icons-react";
 
-import { useStore } from '@/src/state/store';
+import { useStore } from "@/src/state/store";
 
 /*** UTILS ***/
-import { POST } from '@/src/utils/fetch';
+import { POST } from "@/src/utils/fetch";
 
 /*** COMPONENTS ***/
-import RegisterModal, { RegisterStepperOne } from './register';
+import RegisterModal, { RegisterStepperOne } from "./register";
 
 export default function LoginModal() {
   /*** STATE ***/
@@ -26,8 +26,8 @@ export default function LoginModal() {
   const [loading, setLoading] = useState(false);
 
   // form
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
@@ -39,12 +39,17 @@ export default function LoginModal() {
       password,
     };
 
-    const data = await POST('/api/login', formData);
+    const data = await POST("/api/login", formData);
 
     if (!data?.status) {
       setAccount(data);
       closeAllModals();
     } else {
+      showNotification({
+        message: "Invalid username and/or password",
+        color: "red",
+        icon: <IconX />,
+      });
       setLoading(false);
     }
   };
@@ -74,12 +79,12 @@ export default function LoginModal() {
         />
         <Group position="apart">
           <Text>
-            Don&apos;t have an account?{' '}
+            Don&apos;t have an account?{" "}
             <Anchor
               color="cyan.6"
               onClick={() => {
                 openModal({
-                  modalId: 'register-one',
+                  modalId: "register-one",
                   title: <RegisterStepperOne />,
                   centered: true,
                   children: <RegisterModal />,

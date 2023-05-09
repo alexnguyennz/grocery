@@ -1,22 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-import Link from 'next/link';
-import { useRouter } from 'next/router';
+import Link from "next/link";
+import { useRouter } from "next/router";
 
-import { Autocomplete, Paper } from '@mantine/core';
-import { IconSearch } from '@tabler/icons-react';
+import { Autocomplete, Paper } from "@mantine/core";
+import { IconSearch } from "@tabler/icons-react";
 
 /*** STATE ***/
-import { useStore } from '@/src/state/store';
+import { useStore } from "@/src/state/store";
 
 /*** SUPABASE ***/
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
-import type { User } from '@/src/utils/supabase';
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import type { User } from "@/src/utils/supabase";
 
-import Auth from './auth';
-import HeaderDepartments from '@/components/header/header-departments';
+import Auth from "./auth";
+import HeaderDepartments from "@/components/header/header-departments";
 
-import CartButton from './cart-button';
+import CartButton from "./cart-button";
 
 export default function Header() {
   const { push, isReady, query } = useRouter();
@@ -24,19 +24,19 @@ export default function Header() {
   /*** STATE ***/
   const { account, setAccount } = useStore();
 
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   const supabase = useSupabaseClient();
 
   // // sync local state with user's record for any updates
   supabase
-    .channel('any')
+    .channel("any")
     .on(
-      'postgres_changes',
+      "postgres_changes",
       {
-        event: 'UPDATE',
-        schema: 'public',
-        table: 'users',
+        event: "UPDATE",
+        schema: "public",
+        table: "users",
         filter: `id=eq.${account?.id}`,
       },
       (payload) => {
@@ -54,10 +54,10 @@ export default function Header() {
       <header className="shadow-sm">
         <Paper>
           <div className="container mx-auto p-3">
-            <div className="flex items-center justify-between my-3">
+            <div className="my-3 flex items-center justify-between">
               <Link href="/">
-                <h1 className="font-extrabold text-4xl">
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
+                <h1 className="text-4xl font-extrabold">
+                  <span className="bg-gradient-to-r from-sky-400 to-emerald-600 bg-clip-text text-transparent">
                     Grocery
                   </span>
                 </h1>
@@ -89,21 +89,20 @@ export default function Header() {
                     }}
                     placeholder="Search Groceries"
                     data={[
-                      'Milk',
-                      'Bread',
-                      'Eggs',
-                      'Biscuits',
-                      'Butter',
-                      'Crackers',
-                      'Bananas',
-                      'Chips',
-                      'Cheese',
+                      "Milk",
+                      "Bread",
+                      "Eggs",
+                      "Biscuits",
+                      "Butter",
+                      "Crackers",
+                      "Bananas",
+                      "Chips",
+                      "Cheese",
                     ]}
                     limit={10}
                     icon={<IconSearch size={20} />}
                   />
                 </form>
-                {/* <Address /> */}
 
                 <CartButton />
               </div>

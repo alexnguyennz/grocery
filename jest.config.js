@@ -1,8 +1,8 @@
-const nextJest = require('next/jest');
+const nextJest = require("next/jest");
 
+// Provide the path to your Next.js app to load next.config.js and .env files in your test environment
 const createJestConfig = nextJest({
-  // Provide the path to your Next.js app to load next.config.js and .env files in your test environment
-  dir: './',
+  dir: "./",
 });
 
 // Add any custom config to be passed to Jest
@@ -10,15 +10,11 @@ const createJestConfig = nextJest({
 const customJestConfig = {
   // Add more setup options before each test is run
   // setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-  testEnvironment: 'jest-environment-jsdom',
-
+  testEnvironment: "jest-environment-jsdom",
   moduleNameMapper: {
-    '^@/src/(.*)$': '<rootDir>/src/$1',
-    '^@/components/(.*)$': '<rootDir>/components/$1',
-    '^@/types/(.*)$': '<rootDir>/types/$1',
-    '^(\\.{1,2}/.*)\\.js$': '$1',
-    '\\.(css|less)$': '<rootDir>/__tests__/__mocks__/styleMock.js',
+    "\\.(css|less)$": "<rootDir>/__tests__/__mocks__/styleMock.js",
   },
+  setupFiles: ["<rootDir>/__mocks__/ResizeObserver.ts"],
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

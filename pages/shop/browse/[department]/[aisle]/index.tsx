@@ -2,11 +2,8 @@ import { useState } from "react";
 import Head from "next/head";
 import NextLink from "next/link";
 
-import type { GetServerSideProps } from "next";
+import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
-/*** SUPABASE ***/
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { getAisleShelves, type AisleShelves } from "@/src/utils/supabase";
 import { useQuery } from "@tanstack/react-query";
 
 /*** COMPONENTS ***/
@@ -15,12 +12,13 @@ import ProductFilter from "@/components/product/product-filter";
 import ProductPagination from "@/components/product/product-pagination";
 
 import { prisma } from "@/prisma/client";
+import { type shelf } from "@prisma/client";
 
-type PageProps = {
-  shelves: AisleShelves;
-  slug: string;
-  departmentSlug: string;
-};
+interface Shelf extends shelf {
+  count: string;
+  department_slug: string;
+  aisle_slug: string;
+}
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { aisle: aisleSlug, department: departmentSlug } = ctx.query;
@@ -47,7 +45,11 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   };
 };
 
-export default function Category({ shelves, slug, departmentSlug }: PageProps) {
+export default function Category({
+  shelves,
+  slug,
+  departmentSlug,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { aisle_name, aisle_slug, department_name, department_slug } =
     shelves![0];
 
@@ -87,7 +89,7 @@ export default function Category({ shelves, slug, departmentSlug }: PageProps) {
 
       <ProductsLayout.Body>
         <ProductsLayout.Categories>
-          {shelves!.map((shelf) => (
+          {shelves.map((shelf: Shelf) => (
             <li key={shelf.name}>
               <NextLink
                 href={`/shop/browse/${shelf.department_slug}/${shelf.aisle_slug}/${shelf.slug}`}

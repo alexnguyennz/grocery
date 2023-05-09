@@ -5,7 +5,6 @@ import { Carousel } from "@mantine/carousel";
 /*** COMPONENTS ***/
 import ProductCard from "@/components/product/product-card";
 
-import { type Products } from "@/src/utils/supabase";
 import type { products } from "@prisma/client";
 
 export default function ProductCarousel({
@@ -38,7 +37,7 @@ export default function ProductCarousel({
         nextControlLabel="Next carousel page"
         previousControlLabel="Previous carousel page"
       >
-        {[0, 1, 2, 3, 4, 5].map((number, idx) => (
+        {[0, 1, 2, 3, 4, 5].map((number) => (
           <Carousel.Slide key={number}>
             <Skeleton height={350} mb="xl" />
           </Carousel.Slide>
@@ -73,8 +72,7 @@ export default function ProductCarousel({
     >
       {products.map((product, idx) => (
         <Carousel.Slide key={product.id}>
-          <ProductCard product={product} priority={idx === 0} />{" "}
-          {/* set the first image to have priority */}
+          <ProductCard product={product} priority={idx === 0} />
         </Carousel.Slide>
       ))}
     </Carousel>

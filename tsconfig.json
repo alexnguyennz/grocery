@@ -18,7 +18,9 @@
       "@/src/*": ["./src/*"],
       "@/components/*": ["./components/*"],
       "@/types/*": ["./types/*"],
-      "@/prisma/*": ["./prisma/*"]
+      "@/prisma/*": ["./prisma/*"],
+      "@/__tests__/*": ["./__tests__/*"],
+      "@/__mocks__/*": ["./__mocks__/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

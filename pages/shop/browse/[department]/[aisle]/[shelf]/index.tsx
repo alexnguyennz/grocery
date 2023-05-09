@@ -4,9 +4,6 @@ import NextLink from "next/link";
 
 import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
-/*** SUPABASE ***/
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { getShelfCategories, type ShelfCategories } from "@/src/utils/supabase";
 import { useQuery } from "@tanstack/react-query";
 
 /*** COMPONENTS ***/
