@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Head from "next/head";
 import NextLink from "next/link";
 
@@ -14,6 +13,8 @@ import ProductPagination from "@/components/product/product-pagination";
 import { prisma } from "@/prisma/client";
 import { type aisle } from "@prisma/client";
 
+import useCategories from "@/src/hooks/useCategories";
+
 interface Aisle extends aisle {
   count: string;
 }
@@ -22,7 +23,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { department: departmentSlug } = ctx.query;
 
   // get all aisles for this department and the product count for each of these aisles
-  const aisles =
+  const aisles: aisle[] =
     await prisma.$queryRaw`SELECT a.id, a.name, a.slug, a.value, b.name AS department, COUNT(*)::int 
     FROM aisle a 
     INNER JOIN department b ON a.department = b.id 
@@ -35,6 +36,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     props: {
       aisles,
       slug: departmentSlug,
+      departmentName: aisles[0].department,
     },
   };
 };
@@ -42,21 +44,22 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 export default function Department({
   aisles,
   slug,
+  departmentName,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  /*** STATE ***/
-  const [filter, setFilter] = useState("all");
-  const [sort, setSort] = useState("sku");
-  const [pageSize, setPageSize] = useState(20);
-  const [page, setPage] = useState(1);
+  const { settings, setSettings } = useCategories();
 
-  const departmentName = aisles![0].department;
-
-  /*** QUERY ***/
   const { data } = useQuery({
-    queryKey: ["department", slug, page, pageSize, filter, sort],
+    queryKey: [
+      "department",
+      slug,
+      settings.page,
+      settings.pageSize,
+      settings.filter,
+      settings.sort,
+    ],
     queryFn: async () => {
       return fetch(
-        `/api/products?department=${slug}&page=${page}&limit=${pageSize}&filter=${filter}&sort=${sort}`
+        `/api/products?department=${slug}&page=${settings.page}&limit=${settings.pageSize}&filter=${settings.filter}&sort=${settings.sort}`
       ).then((response) => response.json());
     },
     keepPreviousData: true,
@@ -87,21 +90,19 @@ export default function Department({
 
         <ProductsLayout.Main>
           <ProductFilter
-            filter={filter}
-            setFilter={setFilter}
-            sort={sort}
-            setSort={setSort}
+            filter={settings.filter}
+            sort={settings.sort}
+            setSettings={setSettings}
           />
 
           <ProductsLayout.Cards data={data} />
 
           {data && (
             <ProductPagination
-              page={page}
-              pageSize={pageSize}
+              page={settings.page}
+              pageSize={settings.pageSize}
+              setSettings={setSettings}
               count={data && data.count}
-              setPage={setPage}
-              setPageSize={setPageSize}
             />
           )}
         </ProductsLayout.Main>

@@ -1,18 +1,12 @@
-import { ReactNode } from 'react';
-import Head from 'next/head';
-import dynamic from 'next/dynamic';
+import { ReactNode } from "react";
+import Head from "next/head";
 
-/*** COMPONENTS ***/
-import Header from '@/components/header';
-import Footer from '@/components/footer';
+import { Box } from "@mantine/core";
 
-import { Box } from '@mantine/core';
-
-import Main from './main';
+import Header from "@/components/header";
+import Footer from "@/components/footer";
 
 export default function Layout({ children }: { children: ReactNode }) {
-  //const Main = dynamic(() => import('./main'), { ssr: false });
-
   return (
     <>
       <Head>
@@ -25,7 +19,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       <Box
         sx={(theme) => ({
           backgroundColor:
-            theme.colorScheme === 'dark'
+            theme.colorScheme === "dark"
               ? theme.colors.dark[6]
               : theme.colors.gray[1],
         })}
@@ -33,7 +27,9 @@ export default function Layout({ children }: { children: ReactNode }) {
         <div className="flex min-h-screen flex-col">
           <Header />
 
-          <Main>{children}</Main>
+          <main className="container mx-auto flex flex-1 flex-col px-3 py-10">
+            {children}
+          </main>
 
           <Footer />
         </div>

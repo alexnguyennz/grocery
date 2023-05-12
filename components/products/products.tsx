@@ -11,9 +11,6 @@ import {
   Title,
 } from "@mantine/core";
 import { IconChevronDown, IconChevronUp, IconHome2 } from "@tabler/icons-react";
-
-import { UseQueryOptions } from "@tanstack/react-query";
-
 /*** COMPONENTS ***/
 import ProductCard from "@/components/product/product-card";
 
@@ -103,7 +100,7 @@ const Cards = ({ data }: { data: CardData }) => {
     <div className="grid w-full gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
       {data && data.data
         ? data.data.map((product: products) => (
-            <ProductCard product={product} key={product.id} />
+            <ProductCard product={product} key={product.sku} />
           ))
         : [0, 1, 2, 3, 4].map((number, idx) => (
             <Skeleton key={idx} height={350} mb="xl" />
