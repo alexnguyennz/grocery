@@ -1,4 +1,4 @@
-import { useState, type FormEventHandler } from "react";
+import { useState } from "react";
 import {
   Anchor,
   Button,
@@ -20,26 +20,19 @@ import { POST } from "@/src/utils/fetch";
 /*** COMPONENTS ***/
 import RegisterModal, { RegisterStepperOne } from "./register";
 
+import useLoginForm from "@/src/hooks/useLoginForm";
+
 export default function LoginModal() {
-  /*** STATE ***/
-  const setAccount = useStore((state) => state.setAccount);
+  const { setAccount } = useStore();
+
   const [loading, setLoading] = useState(false);
 
-  // form
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const form = useLoginForm();
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = async (event) => {
-    event.preventDefault();
-
+  async function handleSubmit(values: { email: string; password: string }) {
     setLoading(true);
 
-    const formData = {
-      email,
-      password,
-    };
-
-    const data = await POST("/api/login", formData);
+    const data = await POST("/api/login", values);
 
     if (!data?.status) {
       setAccount(data);
@@ -52,30 +45,25 @@ export default function LoginModal() {
       });
       setLoading(false);
     }
-  };
+  }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={form.onSubmit(handleSubmit)}>
       <Stack>
         <TextInput
-          type="email"
           label="Email"
           placeholder="Your email address"
           icon={<IconAt size={20} />}
           size="md"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          {...form.getInputProps("email")}
           data-autofocus
-          required
         />
         <PasswordInput
           label="Password"
           placeholder="Your password"
           icon={<IconLock size={20} />}
           size="md"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
+          {...form.getInputProps("password")}
         />
         <Group position="apart">
           <Text>

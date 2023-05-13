@@ -1,9 +1,9 @@
 /*** SUPABASE ***/
-import { type SupabaseClient } from '@supabase/auth-helpers-nextjs';
-import type { Database } from '@/types/supabase';
+import { type SupabaseClient } from "@supabase/auth-helpers-nextjs";
+import type { Database } from "@/types/supabase";
 
 /*** GENERAL TYPES ***/
-export type Products = Database['public']['Tables']['products']['Row'];
+export type Products = Database["public"]["Tables"]["products"]["Row"];
 
 // include types from cart
 
@@ -23,15 +23,15 @@ export type CartTwo = {
 };
 
 export type UserAddresses =
-  Database['public']['Tables']['user_addresses']['Row'];
+  Database["public"]["Tables"]["user_addresses"]["Row"];
 
-type Shelf = Database['public']['Tables']['shelf']['Row'];
-type Aisle = Database['public']['Tables']['aisle']['Row'];
+type Shelf = Database["public"]["Tables"]["shelf"]["Row"];
+type Aisle = Database["public"]["Tables"]["aisle"]["Row"];
 
-export type User = Database['public']['Tables']['users']['Row'] & {
+export type User = Database["public"]["Tables"]["users"]["Row"] & {
   selected_user_address: UserAddresses;
 };
-export type Department = Database['public']['Tables']['department']['Row'];
+export type Department = Database["public"]["Tables"]["department"]["Row"];
 
 /*** /shop/browse/department/ ***/
 export async function getDepartmentAisles(
@@ -39,14 +39,14 @@ export async function getDepartmentAisles(
   departmentSlug: string | string[] | undefined
 ) {
   return await supabase
-    .from('aisle')
-    .select('*, department!inner(name), products(count)')
-    .eq('department.slug', departmentSlug);
+    .from("aisle")
+    .select("*, department!inner(name), products(count)")
+    .eq("department.slug", departmentSlug);
 }
 
 export type DepartmentAisles = Awaited<
   ReturnType<typeof getDepartmentAisles>
->['data'];
+>["data"];
 
 /*** /shop/browse/department/aisle/ ***/
 export async function getAisleShelves(
@@ -54,12 +54,12 @@ export async function getAisleShelves(
   aisleSlug: string | string[] | undefined
 ) {
   return await supabase
-    .from('shelf')
-    .select('*, aisle!inner(*, department(*)), products(count)')
-    .eq('aisle.slug', aisleSlug);
+    .from("shelf")
+    .select("*, aisle!inner(*, department(*)), products(count)")
+    .eq("aisle.slug", aisleSlug);
 }
 
-export type AisleShelves = Awaited<ReturnType<typeof getAisleShelves>>['data'];
+export type AisleShelves = Awaited<ReturnType<typeof getAisleShelves>>["data"];
 
 /*** /shop/browse/department/aisle/shelf ***/
 export async function getShelfCategories(
@@ -69,17 +69,17 @@ export async function getShelfCategories(
   departmentSlug: string | string[] | undefined
 ) {
   return await supabase
-    .from('shelf')
-    .select('*, aisle!inner(*, department(*))')
-    .eq('slug', shelfSlug)
-    .eq('aisle.slug', aisleSlug)
-    .eq('aisle.department.slug', departmentSlug)
+    .from("shelf")
+    .select("*, aisle!inner(*, department(*))")
+    .eq("slug", shelfSlug)
+    .eq("aisle.slug", aisleSlug)
+    .eq("aisle.department.slug", departmentSlug)
     .single();
 }
 
 export type ShelfCategories = Awaited<
   ReturnType<typeof getShelfCategories>
->['data'];
+>["data"];
 
 export async function insertUser(
   supabase: SupabaseClient,
@@ -90,8 +90,8 @@ export async function insertUser(
   phoneNumber: string,
   dateOfBirth: Date | null
 ) {
-  return await supabase
-    .from('users')
+  return supabase
+    .from("users")
     .insert({
       id,
       first_name: firstName,
@@ -99,21 +99,20 @@ export async function insertUser(
       email,
       phone_number: phoneNumber,
       date_of_birth: dateOfBirth,
-      newsletter: false,
     })
     .select();
 }
 
-export type InsertUser = Awaited<ReturnType<typeof getShelfCategories>>['data'];
+export type InsertUser = Awaited<ReturnType<typeof getShelfCategories>>["data"];
 
 /*** /checkout/revieworder, /account/delivery-addresses ***/
 export async function getUserAddresses(supabase: SupabaseClient) {
-  return await supabase.from('user_addresses').select();
+  return await supabase.from("user_addresses").select();
 }
 
 export type GetUserAddresses = Awaited<
   ReturnType<typeof getUserAddresses>
->['data'];
+>["data"];
 
 /*** /checkout/revieworder, /checkout/payment ***/
 export async function getSelectedAddress(
@@ -121,9 +120,9 @@ export async function getSelectedAddress(
   user_id: string | undefined
 ) {
   return await supabase
-    .from('users')
-    .select('*, selected_user_address(*)')
-    .eq('id', user_id)
+    .from("users")
+    .select("*, selected_user_address(*)")
+    .eq("id", user_id)
     .single();
 }
 
@@ -132,7 +131,7 @@ export async function getUser(
   supabase: SupabaseClient,
   user_id: string | undefined
 ) {
-  return await supabase.from('users').select().eq('id', user_id).single();
+  return await supabase.from("users").select().eq("id", user_id).single();
 }
 
 /*** To cleanup ***/
@@ -142,13 +141,13 @@ export async function getProduct(
   stockcode: string | string[] | undefined
 ) {
   return await supabase
-    .from('products')
-    .select('*, shelf(*, aisle(*, department(*)))')
-    .eq('sku', stockcode)
+    .from("products")
+    .select("*, shelf(*, aisle(*, department(*)))")
+    .eq("sku", stockcode)
     .single();
 }
 
-export type ProductDetails = Awaited<ReturnType<typeof getProduct>>['data'] & {
+export type ProductDetails = Awaited<ReturnType<typeof getProduct>>["data"] & {
   shelf: Shelf[];
   aisle: Aisle[];
   department: Department[];
@@ -158,7 +157,7 @@ export async function getProductImages(
   supabase: SupabaseClient,
   sku: string | undefined
 ) {
-  return await supabase.storage.from('product').list(sku);
+  return await supabase.storage.from("product").list(sku);
 }
 
-export type Storage = Awaited<ReturnType<typeof getProductImages>>['data'];
+export type Storage = Awaited<ReturnType<typeof getProductImages>>["data"];

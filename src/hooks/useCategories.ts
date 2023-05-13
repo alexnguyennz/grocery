@@ -10,7 +10,7 @@ export default function useCategories() {
       };
 
       if (nextState.filter || nextState.pageSize) {
-        newSettings.page = 1; // reset page to start products query from page 1
+        newSettings.page = 1; // reset page to start each query from page 1
       }
 
       return newSettings;
