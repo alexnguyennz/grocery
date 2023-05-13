@@ -15,7 +15,6 @@ import { POST } from "@/src/utils/fetch";
 
 import { type Cart, type User } from "@/src/utils/supabase";
 
-// testing
 const CheckoutForm = ({ cart, user }: { cart: Cart[]; user: User }) => {
   /*** STRIPE ***/
   const stripe = useStripe();
@@ -24,7 +23,7 @@ const CheckoutForm = ({ cart, user }: { cart: Cart[]; user: User }) => {
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
 
-    if (!stripe || !elements) return; // disable form submission until Stripe.js has loaded
+    if (!stripe || !elements) return; // disable form submission if Stripe.js hasn't loaded
 
     const data = await POST("/api/checkout", { cart, user }); // create the pending order and any order items
 

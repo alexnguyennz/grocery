@@ -1,20 +1,19 @@
-import type { Dispatch, SetStateAction } from 'react';
+import type { Dispatch } from "react";
 
-import { useEffect, useState } from 'react';
-import { Pagination, Select } from '@mantine/core';
+import { useEffect, useState } from "react";
+import { Pagination, Select } from "@mantine/core";
+import { type CategoriesSettings } from "@/types/types";
 
 export default function ProductPagination({
   page,
   pageSize,
+  setSettings,
   count,
-  setPage,
-  setPageSize,
 }: {
   page: number;
   pageSize: number;
+  setSettings: Dispatch<Partial<CategoriesSettings>>;
   count: number;
-  setPage: Dispatch<SetStateAction<number>>;
-  setPageSize: Dispatch<SetStateAction<number>>;
 }) {
   const [pageCount, setPageCount] = useState(0);
 
@@ -23,10 +22,10 @@ export default function ProductPagination({
   }, [count, pageSize]);
 
   return (
-    <div className="flex flex-col md:flex-row justify-between md:items-end gap-4">
+    <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
       <Pagination
         page={page}
-        onChange={setPage}
+        onChange={(e) => setSettings({ page: e })}
         total={pageCount}
         boundaries={1}
         color="cyan.6"
@@ -34,27 +33,27 @@ export default function ProductPagination({
       <Select
         label="Items"
         value={String(pageSize)}
-        onChange={(e: string) => setPageSize(Number(e))}
+        onChange={(e: string) => setSettings({ pageSize: Number(e) })}
         data={[
-          { value: '20', label: '20' },
-          { value: '40', label: '40' },
-          { value: '60', label: '60' },
-          { value: '80', label: '80' },
-          { value: '100', label: '100' },
+          { value: "20", label: "20" },
+          { value: "40", label: "40" },
+          { value: "60", label: "60" },
+          { value: "80", label: "80" },
+          { value: "100", label: "100" },
         ]}
         transition="pop-top-left"
         transitionDuration={80}
         transitionTimingFunction="ease"
         styles={(theme) => ({
           item: {
-            '&[data-selected]': {
-              '&, &:hover': {
+            "&[data-selected]": {
+              "&, &:hover": {
                 backgroundColor: theme.colors.cyan[6],
               },
             },
           },
           input: {
-            '&:focus': {
+            "&:focus": {
               borderColor: theme.colors.cyan[6],
             },
           },

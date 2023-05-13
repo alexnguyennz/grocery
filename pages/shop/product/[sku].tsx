@@ -1,25 +1,19 @@
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Head from "next/head";
 import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
-/*** MANTINE ***/
+import { prisma } from "@/prisma/client";
+import type { objects } from "@prisma/client";
+
 import { Skeleton } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
 
 import ProductsLayout from "@/components/products/products";
-
-import { useQuery } from "@tanstack/react-query";
-
 import ProductDetails from "@/components/product/product-details";
 
-/*** UTILS ***/
 import capitalize from "@/src/utils/capitalize";
-
-import { prisma } from "@/prisma/client";
-
-import type { products, objects } from "@prisma/client";
-import { useEffect, useState } from "react";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { sku } = ctx.query;
@@ -87,7 +81,6 @@ export default function Product({
   const { department_aisle_departmentTodepartment: department } = aisle;
 
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [errorImage, setErrorImage] = useState<string | null>(null);
 
   return (
     <>
@@ -150,7 +143,6 @@ export default function Product({
             {!images.length && (
               <Carousel.Slide>
                 <div className="mx-auto w-full bg-white py-10">
-                  {" "}
                   <Skeleton
                     width={500}
                     height={500}

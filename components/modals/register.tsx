@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Button,
   Group,
@@ -6,17 +6,18 @@ import {
   Stepper,
   TextInput,
   PasswordInput,
-} from '@mantine/core';
-import { openModal, closeModal, closeAllModals } from '@mantine/modals';
-import { useForm } from '@mantine/form';
-import { showNotification } from '@mantine/notifications';
-import { IconAt, IconLock, IconX } from '@tabler/icons-react';
+} from "@mantine/core";
+import { openModal, closeModal, closeAllModals } from "@mantine/modals";
+import { showNotification } from "@mantine/notifications";
+import { IconAt, IconLock, IconX } from "@tabler/icons-react";
 
 /*** COMPONENTS ***/
-import RegisterDetailsModal, { RegisterStepperTwo } from './register-details';
+import RegisterDetailsModal, { RegisterStepperTwo } from "./register-details";
 
 /*** SUPABASE ***/
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+
+import useRegisterForm from "@/src/hooks/useRegisterForm";
 
 export function RegisterStepperOne() {
   return (
@@ -34,37 +35,30 @@ export function RegisterStepperOne() {
 }
 
 export default function RegisterModal() {
-  const form = useForm();
+  const form = useRegisterForm();
 
   const [loading, setLoading] = useState(false);
 
-  // form
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmedPassword, setConfirmedPassword] = useState('');
-
   const supabase = useSupabaseClient();
 
-  async function signUp() {
+  async function signUp(values: { email: string; password: string }) {
     setLoading(true);
 
     // create user and set session if successful
     const { error } = await supabase.auth.signUp({
-      email,
-      password,
+      email: values.email,
+      password: values.password,
     });
 
     if (error) {
-      form.setErrors({ email: 'Invalid email' });
-
       showNotification({
         message: error.message,
-        color: 'red',
+        color: "red",
         icon: <IconX />,
       });
     } else {
       openModal({
-        modalId: 'register-two',
+        modalId: "register-two",
         title: <RegisterStepperTwo />,
         centered: true,
         children: <RegisterDetailsModal />,
@@ -79,38 +73,31 @@ export default function RegisterModal() {
     <form onSubmit={form.onSubmit(signUp)}>
       <Stack>
         <TextInput
-          type="email"
           name="email"
           label="Email"
           placeholder="Your email address"
           icon={<IconAt size={20} />}
           size="md"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
           data-autofocus
-          required
+          {...form.getInputProps("email")}
         />
         <PasswordInput
           label="Password"
           placeholder="Your password"
           icon={<IconLock size={20} />}
           size="md"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
+          {...form.getInputProps("password")}
         />
         <PasswordInput
           label="Confirm Password"
           placeholder="Re-enter password"
           icon={<IconLock size={20} />}
           size="md"
-          value={confirmedPassword}
-          onChange={(e) => setConfirmedPassword(e.target.value)}
-          required
+          {...form.getInputProps("confirmPassword")}
         />
         <Group position="right">
           <Button
-            onClick={() => closeModal('register-one')}
+            onClick={() => closeModal("register-one")}
             color="cyan.6"
             variant="subtle"
           >

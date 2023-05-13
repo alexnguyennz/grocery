@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Head from "next/head";
 import NextLink from "next/link";
 
@@ -12,6 +11,8 @@ import ProductFilter from "@/components/product/product-filter";
 import ProductPagination from "@/components/product/product-pagination";
 
 import { prisma } from "@/prisma/client";
+
+import useCategories from "@/src/hooks/useCategories";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const {
@@ -47,12 +48,6 @@ export default function SubCategory({
   aisleSlug,
   departmentSlug,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  /*** STATE ***/
-  const [filter, setFilter] = useState("all");
-  const [sort, setSort] = useState("sku");
-  const [pageSize, setPageSize] = useState(20);
-  const [page, setPage] = useState(1);
-
   const {
     name,
     slug,
@@ -63,21 +58,22 @@ export default function SubCategory({
     count,
   } = shelf[0];
 
-  /*** QUERY ***/
+  const { settings, setSettings } = useCategories();
+
   const { data } = useQuery({
     queryKey: [
       "shelf",
       slug,
       aisleSlug,
       departmentSlug,
-      page,
-      pageSize,
-      filter,
-      sort,
+      settings.page,
+      settings.pageSize,
+      settings.filter,
+      settings.sort,
     ],
     queryFn: async () => {
       return fetch(
-        `/api/products?shelf=${slug}&aisle=${aisleSlug}&department=${departmentSlug}&page=${page}&limit=${pageSize}&filter=${filter}&sort=${sort}`
+        `/api/products?shelf=${slug}&aisle=${aisleSlug}&department=${departmentSlug}&page=${settings.page}&limit=${settings.pageSize}&filter=${settings.filter}&sort=${settings.sort}`
       ).then((response) => response.json());
     },
     keepPreviousData: true,
@@ -118,21 +114,19 @@ export default function SubCategory({
 
         <ProductsLayout.Main>
           <ProductFilter
-            filter={filter}
-            setFilter={setFilter}
-            sort={sort}
-            setSort={setSort}
+            filter={settings.filter}
+            sort={settings.sort}
+            setSettings={setSettings}
           />
 
           <ProductsLayout.Cards data={data} />
 
           {data && (
             <ProductPagination
-              page={page}
-              pageSize={pageSize}
+              page={settings.page}
+              pageSize={settings.pageSize}
+              setSettings={setSettings}
               count={data && data.count}
-              setPage={setPage}
-              setPageSize={setPageSize}
             />
           )}
         </ProductsLayout.Main>

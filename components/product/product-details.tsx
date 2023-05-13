@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 
-/*** MANTINE ***/
 import {
   Accordion,
   Button,
@@ -15,11 +14,9 @@ import {
 
 import { useStore } from "@/src/state/store";
 
-/*** UTILS ***/
 import capitalize from "@/src/utils/capitalize";
 import parse from "html-react-parser";
 
-/*** SUPABASE ***/
 import { type ProductDetails, type Cart } from "@/src/utils/supabase";
 
 type NutritionRow = {
@@ -75,7 +72,7 @@ export default function ProductDetails({ product }: ProductDetails) {
 
       <div className="grid grid-cols-2">
         <Title color={`${price.isSpecial && "red"}`} order={2}>
-          ${price.salePrice.toFixed(2)}{" "}
+          ${price.salePrice.toFixed(2)}
           {unit === "Kg" && (
             <span className="text-lg">{unit.toLowerCase()}</span>
           )}
@@ -217,7 +214,7 @@ export default function ProductDetails({ product }: ProductDetails) {
             </Accordion.Item>
           )}
 
-          {claims && (
+          {claims.length > 0 && (
             <Accordion.Item value="claims">
               <Accordion.Control>Claims</Accordion.Control>
               <Accordion.Panel>
